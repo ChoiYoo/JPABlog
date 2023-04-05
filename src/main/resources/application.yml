@@ -11,15 +11,17 @@ spring:
     username: root
     password: '1111'
 
+
   jpa:
     hibernate:
-      ddl-auto: create-drop
-    generate-ddl: true
+      ddl-auto: none
+    generate-ddl: false
 
     properties:
       format_sql: true
       hibernate:
         show-sql: true
+    defer-datasource-initialization: true
 
   mvc:
     hiddenmethod:

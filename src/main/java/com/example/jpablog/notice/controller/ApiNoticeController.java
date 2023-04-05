@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @RestController
@@ -134,6 +135,32 @@ public class ApiNoticeController {
     public int noticeCount() {
 
         return 10;
+
+    }
+
+    // url에 있는 id를 가져오기 위해서는 @PathVariable 필수!!!!!
+    @GetMapping("/api/notice/{id}")
+    public Notice notice(@PathVariable Long id) {
+
+        Optional<Notice> notice = noticeRepository.findById(id);
+        if (notice.isPresent()) {
+            return notice.get();
+        }
+
+        return null;
+
+    }
+
+    @PutMapping("/api/notice/{id}")
+    public void updatNotice(@PathVariable Long id, @RequestBody NoticeInput noticeInput) {
+
+        Optional<Notice> notice = noticeRepository.findById(id);
+        if (notice.isPresent()) {
+            notice.get().setTitle(noticeInput.getTitle());
+            notice.get().setContents(noticeInput.getContents());
+            notice.get().setUpdateDate(LocalDateTime.now());
+            noticeRepository.save(notice.get());
+        }
 
     }
 }
