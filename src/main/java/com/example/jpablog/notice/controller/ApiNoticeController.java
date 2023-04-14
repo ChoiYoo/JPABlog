@@ -119,6 +119,8 @@ public class ApiNoticeController {
 //
 //        return notice;
 //    }
+
+    /*
     //@RequestBody 필수!!!!!!!!
     @PostMapping("/api/notice")
     public Notice addNotice(@RequestBody NoticeInput noticeInput) {
@@ -135,6 +137,8 @@ public class ApiNoticeController {
 
         return resultNotice;
     }
+
+     */
 
     @GetMapping("api/notice/count")
     public int noticeCount() {
@@ -259,6 +263,21 @@ public class ApiNoticeController {
     public void deleteAll() {
 
         noticeRepository.deleteAll();
+
+    }
+
+    @PostMapping("/api/notice")
+    public void addNotice(@RequestBody NoticeInput noticeInput) {
+
+        Notice notice = Notice.builder()
+                .title(noticeInput.getTitle())
+                .contents(noticeInput.getContents())
+                .hits(0)
+                .likes(0)
+                .regDate(LocalDateTime.now())
+                .build();
+
+        noticeRepository.save(notice);
 
     }
 }
