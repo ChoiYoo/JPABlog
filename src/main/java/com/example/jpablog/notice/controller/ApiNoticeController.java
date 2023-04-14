@@ -3,6 +3,7 @@ package com.example.jpablog.notice.controller;
 import com.example.jpablog.notice.entity.Notice;
 import com.example.jpablog.notice.exception.AlreadyDeletedException;
 import com.example.jpablog.notice.exception.NoticeNotFoundException;
+import com.example.jpablog.notice.model.NoticeDeleteInput;
 import com.example.jpablog.notice.model.NoticeInput;
 import com.example.jpablog.notice.model.NoticeModel;
 import com.example.jpablog.notice.repository.NoticeRepository;
@@ -237,6 +238,27 @@ public class ApiNoticeController {
         notice.setDeleted(true);
         notice.setDeletedDate(LocalDateTime.now());
         noticeRepository.save(notice);
+
+    }
+
+    @DeleteMapping("/api/notice")
+    public void deleteNoticeList(@RequestBody NoticeDeleteInput noticeDeleteInput) {
+
+        List<Notice> noticeList = noticeRepository.findByIdIn(noticeDeleteInput.getIdList())
+                .orElseThrow(() -> new NoticeNotFoundException("공지사항의 글이 존재하지 않습니다."));
+
+        noticeList.stream().forEach(e ->{
+            e.setDeleted(true);
+            e.setDeletedDate(LocalDateTime.now());
+        });
+
+        noticeRepository.saveAll(noticeList);
+    }
+
+    @DeleteMapping("/api/notice/all")
+    public void deleteAll() {
+
+        noticeRepository.deleteAll();
 
     }
 }
