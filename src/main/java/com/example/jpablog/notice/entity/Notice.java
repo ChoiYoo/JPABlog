@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -36,4 +37,10 @@ public class Notice {
 
     @Column
     private int likes;
+
+    @Column
+    private boolean deleted;
+
+    @Column
+    private LocalDateTime deletedDate;
 }
