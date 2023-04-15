@@ -2,17 +2,18 @@ package com.example.jpablog.user.controller;
 
 import com.example.jpablog.notice.model.ResponseError;
 import com.example.jpablog.user.entity.Member;
+import com.example.jpablog.user.exception.MemberNotFoundException;
 import com.example.jpablog.user.model.MemberInput;
+import com.example.jpablog.user.model.MemberUpdate;
 import com.example.jpablog.user.repository.MemberRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -64,5 +65,33 @@ public class ApiMemberController {
         memberRepository.save(user);
 
         return ResponseEntity.ok().build();
+    }
+
+    @ExceptionHandler(MemberNotFoundException.class)
+    public ResponseEntity<?> MemberNotFoundExceptionHandler(MemberNotFoundException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @PutMapping("/api/user/{id}")
+    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody @Valid MemberUpdate memberUpdate, Errors errors) {
+
+        List<ResponseError> responseErrorList = new ArrayList<>();
+        if (errors.hasErrors()) {
+            errors.getAllErrors().forEach((e) -> {
+                responseErrorList.add(ResponseError.of((FieldError)e));
+            });
+            return new ResponseEntity<>(responseErrorList, HttpStatus.BAD_REQUEST);
+        }
+
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new MemberNotFoundException("사용자 정보가 없습니다."));
+
+        member.setPhone(memberUpdate.getPhone());
+        member.setUpdateDate(LocalDateTime.now());
+        memberRepository.save(member);
+
+        return ResponseEntity.ok().build();
+
+
     }
 }
