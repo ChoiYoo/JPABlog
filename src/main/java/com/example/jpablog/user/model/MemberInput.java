@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Data
-public class UserInput {
+public class MemberInput {
 
     @Email(message = "이메일 형식에 맞게 입력해주세요.")
     @NotBlank(message = "이메일은 필수 항목입니다.")
