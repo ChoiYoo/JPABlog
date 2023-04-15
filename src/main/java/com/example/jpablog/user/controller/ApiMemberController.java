@@ -4,6 +4,7 @@ import com.example.jpablog.notice.model.ResponseError;
 import com.example.jpablog.user.entity.Member;
 import com.example.jpablog.user.exception.MemberNotFoundException;
 import com.example.jpablog.user.model.MemberInput;
+import com.example.jpablog.user.model.MemberReponse;
 import com.example.jpablog.user.model.MemberUpdate;
 import com.example.jpablog.user.repository.MemberRepository;
 import jakarta.validation.Valid;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @RestController
@@ -92,6 +94,18 @@ public class ApiMemberController {
 
         return ResponseEntity.ok().build();
 
+
+    }
+
+    @GetMapping("/api/user/{id}")
+    public MemberReponse getMember(@PathVariable Long id) {
+
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new MemberNotFoundException("사용자 정보가 없습니다."));
+
+//        MemberReponse memberReponse = new MemberReponse(member);
+        MemberReponse memberReponse = MemberReponse.of(member);
+        return memberReponse;
 
     }
 }
