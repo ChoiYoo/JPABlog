@@ -15,6 +15,7 @@ import com.example.jpablog.user.model.MemberUpdate;
 import com.example.jpablog.user.repository.MemberRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -221,6 +222,31 @@ public class ApiMemberController {
                 .regDate(LocalDateTime.now())
                 .build();
         memberRepository.save(member);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("api/user/{id}")
+    public ResponseEntity<?> deleteMember(@PathVariable Long id) {
+
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new MemberNotFoundException("사용자 정보가 없습니다."));
+
+        // 유저가 쓴 공지사항이 있는 경우
+        // -> ??
+        // 1. 삭제가 안된다. 삭제하려면, 본인이 쓴 공지사항 모조리 삭제
+        // 2. 유저 삭제에 공지사항 글을 다 삭제하는 경우
+        // 3. 유저는 삭제하되, 공지사항 글은 남겨두는 경우
+
+        try {
+            memberRepository.delete(member);
+        } catch (DataIntegrityViolationException e) {
+            String message = "제약조건에 문제가 발생하였습니다.";
+            return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            String message = "회원탈퇴 중 문제가 발생하였습니다.";
+            return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+        }
 
         return ResponseEntity.ok().build();
 
