@@ -1,8 +1,10 @@
 package com.example.jpablog.user.controller;
 
 import com.example.jpablog.notice.entity.Notice;
+import com.example.jpablog.notice.entity.NoticeLike;
 import com.example.jpablog.notice.model.NoticeResponse;
 import com.example.jpablog.notice.model.ResponseError;
+import com.example.jpablog.notice.repository.NoticeLikeRepository;
 import com.example.jpablog.notice.repository.NoticeRepository;
 import com.example.jpablog.user.entity.Member;
 import com.example.jpablog.user.exception.ExistEmailException;
@@ -34,6 +36,7 @@ public class ApiMemberController {
 
     private final MemberRepository memberRepository;
     private final NoticeRepository noticeRepository;
+    private final NoticeLikeRepository noticeLikeRepository;
 
 
 //    @PostMapping("/api/user")
@@ -289,6 +292,18 @@ public class ApiMemberController {
     void sendSMS(String message) {
         System.out.println("[문자메시지전송]");
         System.out.println(message);
+
+    }
+
+    @GetMapping("api/user/{id}/notice/like")
+    public List<NoticeLike> likeNotice(@PathVariable Long id) {
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new MemberNotFoundException("사용자 정보가 없습니다."));
+
+        List<NoticeLike> noticeLikeList = noticeLikeRepository.findByMember(member);
+
+        return noticeLikeList;
+
 
     }
 }
