@@ -5,6 +5,7 @@ import com.example.jpablog.notice.model.NoticeResponse;
 import com.example.jpablog.notice.model.ResponseError;
 import com.example.jpablog.notice.repository.NoticeRepository;
 import com.example.jpablog.user.entity.Member;
+import com.example.jpablog.user.exception.ExistEmailException;
 import com.example.jpablog.user.exception.MemberNotFoundException;
 import com.example.jpablog.user.model.MemberInput;
 import com.example.jpablog.user.model.MemberReponse;
@@ -49,29 +50,29 @@ public class ApiMemberController {
 //        return ResponseEntity.ok().build();
 //    }
 
-    @PostMapping("/api/user")
-    public ResponseEntity<?> addUser(@RequestBody @Valid MemberInput memberInput, Errors errors) {
-
-        List<ResponseError> responseErrorList = new ArrayList<>();
-        if (errors.hasErrors()) {
-            errors.getAllErrors().forEach((e) -> {
-                responseErrorList.add(ResponseError.of((FieldError)e));
-            });
-            return new ResponseEntity<>(responseErrorList, HttpStatus.BAD_REQUEST);
-        }
-
-        Member user = Member.builder()
-                .email(memberInput.getEmail())
-                .userName(memberInput.getUsername())
-                .password(memberInput.getPassword())
-                .phone(memberInput.getPhone())
-                .regDate(LocalDateTime.now())
-                .build();
-
-        memberRepository.save(user);
-
-        return ResponseEntity.ok().build();
-    }
+//    @PostMapping("/api/user")
+//    public ResponseEntity<?> addUser(@RequestBody @Valid MemberInput memberInput, Errors errors) {
+//
+//        List<ResponseError> responseErrorList = new ArrayList<>();
+//        if (errors.hasErrors()) {
+//            errors.getAllErrors().forEach((e) -> {
+//                responseErrorList.add(ResponseError.of((FieldError)e));
+//            });
+//            return new ResponseEntity<>(responseErrorList, HttpStatus.BAD_REQUEST);
+//        }
+//
+//        Member user = Member.builder()
+//                .email(memberInput.getEmail())
+//                .userName(memberInput.getUsername())
+//                .password(memberInput.getPassword())
+//                .phone(memberInput.getPhone())
+//                .regDate(LocalDateTime.now())
+//                .build();
+//
+//        memberRepository.save(user);
+//
+//        return ResponseEntity.ok().build();
+//    }
 
     @ExceptionHandler(MemberNotFoundException.class)
     public ResponseEntity<?> MemberNotFoundExceptionHandler(MemberNotFoundException exception) {
@@ -128,6 +129,41 @@ public class ApiMemberController {
         });
 
         return noticeResponsesList;
-        }
     }
+
+    @PostMapping("/api/user")
+    public ResponseEntity<?> AddUser(@RequestBody @Valid MemberInput memberInput, Errors errors) {
+
+        List<ResponseError> responseErrorList = new ArrayList<>();
+        if (errors.hasErrors()) {
+            errors.getAllErrors().stream().forEach((e) -> {
+                responseErrorList.add(ResponseError.of((FieldError)e));
+            });
+            return new ResponseEntity<>(responseErrorList, HttpStatus.BAD_REQUEST);
+        }
+
+        if (memberRepository.countByEmail(memberInput.getEmail()) > 0 ) {
+            throw new ExistEmailException("이미 가입된 이메일입니다.");
+        }
+
+        Member member = Member.builder()
+                .email(memberInput.getEmail())
+                .userName(memberInput.getUsername())
+                .phone(memberInput.getPhone())
+                .password(memberInput.getPassword())
+                .regDate(LocalDateTime.now())
+                .build();
+        memberRepository.save(member);
+
+        return ResponseEntity.ok().build();
+
+    }
+
+    @ExceptionHandler(ExistEmailException.class)
+    public ResponseEntity<?> ExistEmailExceptionHandler(ExistEmailException exception) {
+
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+
+    }
+}
 
