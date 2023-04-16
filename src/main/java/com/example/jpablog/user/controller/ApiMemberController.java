@@ -15,6 +15,7 @@ import com.example.jpablog.user.exception.MemberNotFoundException;
 import com.example.jpablog.user.exception.PasswordNotMatchException;
 import com.example.jpablog.user.model.*;
 import com.example.jpablog.user.repository.MemberRepository;
+import com.example.jpablog.util.JWTUtils;
 import com.example.jpablog.util.PasswordUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -395,6 +396,24 @@ public class ApiMemberController {
                 .sign(Algorithm.HMAC512("zerobase".getBytes()));
 
         return ResponseEntity.ok().body(MemberLoginToken.builder().token(newToken).build());
+    }
+
+    @DeleteMapping("/api/user/login")
+    public ResponseEntity<?> removeToken(@RequestHeader("JWT-TOKEN") String token) {
+
+        String email = "";
+        try {
+            email = JWTUtils.getIssuer(token);
+        } catch (SignatureVerificationException e) {
+
+            return new ResponseEntity<>("토큰 정보가 정확하지 않습니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        // 세션, 쿠키 삭제
+        // 클라이언트 쿠키 / 로컬스토리지 / 세션스토리지
+        // 블랙리스트 작성
+
+        return ResponseEntity.ok().build();
 
     }
 
