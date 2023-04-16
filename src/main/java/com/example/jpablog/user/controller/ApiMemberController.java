@@ -8,10 +8,7 @@ import com.example.jpablog.user.entity.Member;
 import com.example.jpablog.user.exception.ExistEmailException;
 import com.example.jpablog.user.exception.MemberNotFoundException;
 import com.example.jpablog.user.exception.PasswordNotMatchException;
-import com.example.jpablog.user.model.MemberInput;
-import com.example.jpablog.user.model.MemberInputPassword;
-import com.example.jpablog.user.model.MemberReponse;
-import com.example.jpablog.user.model.MemberUpdate;
+import com.example.jpablog.user.model.*;
 import com.example.jpablog.user.repository.MemberRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -249,6 +246,17 @@ public class ApiMemberController {
         }
 
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/api/user")
+    public ResponseEntity<?> findMember(@RequestBody MemberInputFind memberInputFind) {
+
+        Member member = memberRepository.findByUserNameAndPhone(memberInputFind.getUserName(), memberInputFind.getPhone())
+                .orElseThrow(() -> new MemberNotFoundException("사용자 정보가 없습니다."));
+
+        MemberReponse memberReponse = MemberReponse.of(member);
+
+        return ResponseEntity.ok().body(memberReponse);
 
     }
 }
