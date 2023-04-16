@@ -346,9 +346,12 @@ public class ApiMemberController {
             throw new PasswordNotMatchException("비밀번호가 일치하지 않습니다.");
         }
 
+        LocalDateTime expiredDateTime = LocalDateTime.now().plusMonths(1);
+        Date expiredDate = java.sql.Timestamp.valueOf(expiredDateTime);
+
         // 토큰 발행 시점
         String token = JWT.create()
-                .withExpiresAt(new Date())
+                .withExpiresAt(expiredDate)
                 .withClaim("member_id", member.getId())
                 .withSubject(member.getUserName())
                 .withIssuer(member.getEmail())
