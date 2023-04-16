@@ -2,6 +2,7 @@ package com.example.jpablog.user.controller;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.example.jpablog.notice.entity.Notice;
 import com.example.jpablog.notice.entity.NoticeLike;
 import com.example.jpablog.notice.model.NoticeResponse;
@@ -15,6 +16,7 @@ import com.example.jpablog.user.exception.PasswordNotMatchException;
 import com.example.jpablog.user.model.*;
 import com.example.jpablog.user.repository.MemberRepository;
 import com.example.jpablog.util.PasswordUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -23,6 +25,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Repository;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -349,7 +352,7 @@ public class ApiMemberController {
         LocalDateTime expiredDateTime = LocalDateTime.now().plusMonths(1);
         Date expiredDate = java.sql.Timestamp.valueOf(expiredDateTime);
 
-        // 토큰 발행 시점
+        // 토큰 발행 시작
         String token = JWT.create()
                 .withExpiresAt(expiredDate)
                 .withClaim("member_id", member.getId())
@@ -360,8 +363,41 @@ public class ApiMemberController {
 
 
         return ResponseEntity.ok().body(MemberLoginToken.builder().token(token).build());
+    }
 
+    @PatchMapping("/api/user/login")
+    public ResponseEntity<?> refreshToke(HttpServletRequest request) {
+
+        String token = request.getHeader("JWT-TOKEN");
+        String email = "";
+
+        try {
+            email = JWT.require(Algorithm.HMAC512("zerobase".getBytes()))
+                    .build()
+                    .verify(token)
+                    .getIssuer();
+
+        } catch (SignatureVerificationException e) {
+            throw new PasswordNotMatchException("비밀번호가 일치하지 않습니다.");
+        }
+
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new MemberNotFoundException("사용자 정보가 없습니다."));
+
+        LocalDateTime expiredDateTime = LocalDateTime.now().plusMonths(1);
+        Date expiredDate = java.sql.Timestamp.valueOf(expiredDateTime);
+
+        String newToken = JWT.create()
+                .withExpiresAt(expiredDate)
+                .withClaim("member_id", member.getId())
+                .withSubject(member.getUserName())
+                .withIssuer(member.getEmail())
+                .sign(Algorithm.HMAC512("zerobase".getBytes()));
+
+        return ResponseEntity.ok().body(MemberLoginToken.builder().token(newToken).build());
 
     }
+
+
 }
 
