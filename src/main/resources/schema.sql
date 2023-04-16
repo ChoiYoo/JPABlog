@@ -1,5 +1,20 @@
+
+DROP TABLE IF EXISTS MEMBER;
 DROP TABLE IF EXISTS NOTICE;
 
+-- auto-generated definition
+create table MEMBER
+(
+    ID          BIGINT auto_increment primary key,
+    EMAIL       VARCHAR(255),
+    USER_NAME   VARCHAR(255),
+    PASSWORD    VARCHAR(255),
+    PHONE       VARCHAR(255),
+    REG_DATE    TIMESTAMP,
+    UPDATE_DATE TIMESTAMP
+);
+
+-- auto-generated definition
 create table NOTICE
 (
     ID          BIGINT auto_increment primary key,
@@ -12,5 +27,8 @@ create table NOTICE
     REG_DATE       TIMESTAMP,
     UPDATE_DATE    TIMESTAMP,
     DELETED_DATE   TIMESTAMP,
-    DELETED        BOOLEAN
+    DELETED        BOOLEAN,
+
+    MEMBER_ID         BIGINT,
+    constraint FK_NOTICE_MEMBER_ID foreign key(MEMBER_ID) references MEMBER(ID)
 );

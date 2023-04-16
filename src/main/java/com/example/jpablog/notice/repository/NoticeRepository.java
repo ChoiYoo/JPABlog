@@ -1,7 +1,7 @@
 package com.example.jpablog.notice.repository;
 
 import com.example.jpablog.notice.entity.Notice;
-import org.aspectj.weaver.ast.Not;
+import com.example.jpablog.user.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -20,4 +20,6 @@ public interface NoticeRepository extends JpaRepository<Notice, Long> {
     Optional<List<Notice>> findByTitleAndContentsAndRegDateIsGreaterThanEqual(String title, String contents, LocalDateTime regDate);
 
     int countByTitleAndContentsAndRegDateIsGreaterThanEqual(String title, String contents, LocalDateTime regDate);
+
+    List<Notice> findByMember(Member member);
 }
