@@ -18,6 +18,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -133,33 +135,33 @@ public class ApiMemberController {
         return noticeResponsesList;
     }
 
-    @PostMapping("/api/user")
-    public ResponseEntity<?> AddUser(@RequestBody @Valid MemberInput memberInput, Errors errors) {
-
-        List<ResponseError> responseErrorList = new ArrayList<>();
-        if (errors.hasErrors()) {
-            errors.getAllErrors().stream().forEach((e) -> {
-                responseErrorList.add(ResponseError.of((FieldError)e));
-            });
-            return new ResponseEntity<>(responseErrorList, HttpStatus.BAD_REQUEST);
-        }
-
-        if (memberRepository.countByEmail(memberInput.getEmail()) > 0 ) {
-            throw new ExistEmailException("이미 가입된 이메일입니다.");
-        }
-
-        Member member = Member.builder()
-                .email(memberInput.getEmail())
-                .userName(memberInput.getUsername())
-                .phone(memberInput.getPhone())
-                .password(memberInput.getPassword())
-                .regDate(LocalDateTime.now())
-                .build();
-        memberRepository.save(member);
-
-        return ResponseEntity.ok().build();
-
-    }
+//    @PostMapping("/api/user")
+//    public ResponseEntity<?> AddUser(@RequestBody @Valid MemberInput memberInput, Errors errors) {
+//
+//        List<ResponseError> responseErrorList = new ArrayList<>();
+//        if (errors.hasErrors()) {
+//            errors.getAllErrors().stream().forEach((e) -> {
+//                responseErrorList.add(ResponseError.of((FieldError)e));
+//            });
+//            return new ResponseEntity<>(responseErrorList, HttpStatus.BAD_REQUEST);
+//        }
+//
+//        if (memberRepository.countByEmail(memberInput.getEmail()) > 0 ) {
+//            throw new ExistEmailException("이미 가입된 이메일입니다.");
+//        }
+//
+//        Member member = Member.builder()
+//                .email(memberInput.getEmail())
+//                .userName(memberInput.getUsername())
+//                .phone(memberInput.getPhone())
+//                .password(memberInput.getPassword())
+//                .regDate(LocalDateTime.now())
+//                .build();
+//        memberRepository.save(member);
+//
+//        return ResponseEntity.ok().build();
+//
+//    }
 
     @ExceptionHandler(value = {ExistEmailException.class, PasswordNotMatchException.class})
     public ResponseEntity<?> ExistEmailExceptionHandler(RuntimeException exception) {
@@ -187,6 +189,41 @@ public class ApiMemberController {
         memberRepository.save(member);
 
         return ResponseEntity.ok().build();
+    }
+
+    private String getEncryptPassword(String password) {
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        return bCryptPasswordEncoder.encode(password);
+    }
+
+    @PostMapping("/api/user")
+    public ResponseEntity<?> AddUser(@RequestBody @Valid MemberInput memberInput, Errors errors) {
+
+        List<ResponseError> responseErrorList = new ArrayList<>();
+        if (errors.hasErrors()) {
+            errors.getAllErrors().stream().forEach((e) -> {
+                responseErrorList.add(ResponseError.of((FieldError)e));
+            });
+            return new ResponseEntity<>(responseErrorList, HttpStatus.BAD_REQUEST);
+        }
+
+        if (memberRepository.countByEmail(memberInput.getEmail()) > 0 ) {
+            throw new ExistEmailException("이미 가입된 이메일입니다.");
+        }
+
+        String encryptPassword = getEncryptPassword(memberInput.getPassword());
+
+        Member member = Member.builder()
+                .email(memberInput.getEmail())
+                .userName(memberInput.getUsername())
+                .phone(memberInput.getPhone())
+                .password(encryptPassword)
+                .regDate(LocalDateTime.now())
+                .build();
+        memberRepository.save(member);
+
+        return ResponseEntity.ok().build();
+
     }
 }
 
