@@ -1,5 +1,7 @@
 package com.example.jpablog.user.controller;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.example.jpablog.notice.entity.Notice;
 import com.example.jpablog.notice.entity.NoticeLike;
 import com.example.jpablog.notice.model.NoticeResponse;
@@ -26,10 +28,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @RequiredArgsConstructor
 @RestController
@@ -307,6 +306,28 @@ public class ApiMemberController {
         return noticeLikeList;
     }
 
+//    @PostMapping("/api/user/login")
+//    public ResponseEntity<?> createToken(@RequestBody @Valid MemberLogin memberLogin, Errors errors) {
+//        List<ResponseError> responseErrorList = new ArrayList<>();
+//        if (errors.hasErrors()) {
+//            errors.getAllErrors().stream().forEach((e) -> {
+//                responseErrorList.add(ResponseError.of((FieldError)e));
+//            });
+//            return new ResponseEntity<>(responseErrorList, HttpStatus.BAD_REQUEST);
+//        }
+//
+//
+//        Member member = memberRepository.findByEmail(memberLogin.getEmail())
+//                .orElseThrow(() -> new MemberNotFoundException("사용자 정보가 없습니다."));
+//
+//        if (!PasswordUtils.equalPassword(memberLogin.getPassword(), member.getPassword())) {
+//            throw new PasswordNotMatchException("비밀번호가 일치하지 않습니다.");
+//        }
+//        return ResponseEntity.ok().build();
+//
+//
+//    }
+
     @PostMapping("/api/user/login")
     public ResponseEntity<?> createToken(@RequestBody @Valid MemberLogin memberLogin, Errors errors) {
         List<ResponseError> responseErrorList = new ArrayList<>();
@@ -324,7 +345,18 @@ public class ApiMemberController {
         if (!PasswordUtils.equalPassword(memberLogin.getPassword(), member.getPassword())) {
             throw new PasswordNotMatchException("비밀번호가 일치하지 않습니다.");
         }
-        return ResponseEntity.ok().build();
+
+        // 토큰 발행 시점
+        String token = JWT.create()
+                .withExpiresAt(new Date())
+                .withClaim("member_id", member.getId())
+                .withSubject(member.getUserName())
+                .withIssuer(member.getEmail())
+                .sign(Algorithm.HMAC512("zerobase".getBytes()));
+
+
+
+        return ResponseEntity.ok().body(MemberLoginToken.builder().token(token).build());
 
 
     }
