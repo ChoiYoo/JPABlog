@@ -12,6 +12,7 @@ import com.example.jpablog.user.exception.MemberNotFoundException;
 import com.example.jpablog.user.exception.PasswordNotMatchException;
 import com.example.jpablog.user.model.*;
 import com.example.jpablog.user.repository.MemberRepository;
+import com.example.jpablog.util.PasswordUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -198,6 +199,7 @@ public class ApiMemberController {
         return bCryptPasswordEncoder.encode(password);
     }
 
+    // 회원가입
     @PostMapping("/api/user")
     public ResponseEntity<?> AddUser(@RequestBody @Valid MemberInput memberInput, Errors errors) {
 
@@ -303,6 +305,26 @@ public class ApiMemberController {
         List<NoticeLike> noticeLikeList = noticeLikeRepository.findByMember(member);
 
         return noticeLikeList;
+    }
+
+    @PostMapping("/api/user/login")
+    public ResponseEntity<?> createToken(@RequestBody @Valid MemberLogin memberLogin, Errors errors) {
+        List<ResponseError> responseErrorList = new ArrayList<>();
+        if (errors.hasErrors()) {
+            errors.getAllErrors().stream().forEach((e) -> {
+                responseErrorList.add(ResponseError.of((FieldError)e));
+            });
+            return new ResponseEntity<>(responseErrorList, HttpStatus.BAD_REQUEST);
+        }
+
+
+        Member member = memberRepository.findByEmail(memberLogin.getEmail())
+                .orElseThrow(() -> new MemberNotFoundException("사용자 정보가 없습니다."));
+
+        if (!PasswordUtils.equalPassword(memberLogin.getPassword(), member.getPassword())) {
+            throw new PasswordNotMatchException("비밀번호가 일치하지 않습니다.");
+        }
+        return ResponseEntity.ok().build();
 
 
     }
