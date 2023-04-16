@@ -7,7 +7,9 @@ import com.example.jpablog.notice.repository.NoticeRepository;
 import com.example.jpablog.user.entity.Member;
 import com.example.jpablog.user.exception.ExistEmailException;
 import com.example.jpablog.user.exception.MemberNotFoundException;
+import com.example.jpablog.user.exception.PasswordNotMatchException;
 import com.example.jpablog.user.model.MemberInput;
+import com.example.jpablog.user.model.MemberInputPassword;
 import com.example.jpablog.user.model.MemberReponse;
 import com.example.jpablog.user.model.MemberUpdate;
 import com.example.jpablog.user.repository.MemberRepository;
@@ -159,11 +161,32 @@ public class ApiMemberController {
 
     }
 
-    @ExceptionHandler(ExistEmailException.class)
-    public ResponseEntity<?> ExistEmailExceptionHandler(ExistEmailException exception) {
+    @ExceptionHandler(value = {ExistEmailException.class, PasswordNotMatchException.class})
+    public ResponseEntity<?> ExistEmailExceptionHandler(RuntimeException exception) {
 
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
 
+    }
+
+    @PatchMapping("/api/user/{id}/password")
+    public ResponseEntity<?> updateMemberPassword(@PathVariable Long id, @RequestBody MemberInputPassword memberInputPassword, Errors errors) {
+
+        List<ResponseError> responseErrorList = new ArrayList<>();
+        if (errors.hasErrors()) {
+            errors.getAllErrors().stream().forEach((e) -> {
+                responseErrorList.add(ResponseError.of((FieldError)e));
+            });
+            return new ResponseEntity<>(responseErrorList, HttpStatus.BAD_REQUEST);
+        }
+
+        Member member = memberRepository.findByIdAndPassword(id, memberInputPassword.getPassword())
+                .orElseThrow(() -> new PasswordNotMatchException("비밀번호가 일치하지 않습니다."));
+
+        member.setPassword(memberInputPassword.getNewPassword());
+
+        memberRepository.save(member);
+
+        return ResponseEntity.ok().build();
     }
 }
 
