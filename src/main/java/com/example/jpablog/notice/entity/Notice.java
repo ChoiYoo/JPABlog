@@ -1,5 +1,6 @@
 package com.example.jpablog.notice.entity;
 
+import com.example.jpablog.user.entity.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,6 +20,10 @@ public class Notice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne
+    @JoinColumn
+    private Member member;
 
     @Column
     private String title;

@@ -1,6 +1,9 @@
 package com.example.jpablog.user.controller;
 
+import com.example.jpablog.notice.entity.Notice;
+import com.example.jpablog.notice.model.NoticeResponse;
 import com.example.jpablog.notice.model.ResponseError;
+import com.example.jpablog.notice.repository.NoticeRepository;
 import com.example.jpablog.user.entity.Member;
 import com.example.jpablog.user.exception.MemberNotFoundException;
 import com.example.jpablog.user.model.MemberInput;
@@ -26,6 +29,7 @@ import java.util.Optional;
 public class ApiMemberController {
 
     private final MemberRepository memberRepository;
+    private final NoticeRepository noticeRepository;
 
 
 //    @PostMapping("/api/user")
@@ -108,4 +112,22 @@ public class ApiMemberController {
         return memberReponse;
 
     }
-}
+
+    @GetMapping("/api/user/{id}/notice")
+    public List<NoticeResponse> MemberNotice(@PathVariable Long id) {
+
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new MemberNotFoundException("사용자 정보가 없습니다."));
+
+        List<Notice> noticeList = noticeRepository.findByMember(member);
+
+        List<NoticeResponse> noticeResponsesList = new ArrayList<>();
+
+        noticeList.stream().forEach((e) -> {
+            noticeResponsesList.add(NoticeResponse.of(e));
+        });
+
+        return noticeResponsesList;
+        }
+    }
+
