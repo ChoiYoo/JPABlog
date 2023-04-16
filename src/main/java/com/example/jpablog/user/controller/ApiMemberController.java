@@ -26,6 +26,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
@@ -257,6 +258,37 @@ public class ApiMemberController {
         MemberReponse memberReponse = MemberReponse.of(member);
 
         return ResponseEntity.ok().body(memberReponse);
+    }
+
+    private String getResetPassword() {
+        return UUID.randomUUID().toString().replaceAll("-", "").substring(0, 10);
+    }
+
+    @GetMapping ("/api/user/{id}/password/reset")
+    public ResponseEntity<?> resetMemberPassword(@PathVariable Long id) {
+
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new MemberNotFoundException("사용자 정보가 없습니다."));
+
+        // 비밀번호 초기화
+        String resetPassword = getResetPassword();
+        String resetEncryptPassword = getEncryptPassword(resetPassword);
+
+        member.setPassword(resetEncryptPassword);
+        memberRepository.save(member);
+
+        String message = String.format("[%s]님의 임시비밀번호가 [%s]로 초기화되었습니다."
+        , member.getUserName()
+        , resetPassword);
+        sendSMS(message);
+
+        return ResponseEntity.ok().build();
+
+    }
+
+    void sendSMS(String message) {
+        System.out.println("[문자메시지전송]");
+        System.out.println(message);
 
     }
 }
