@@ -2,11 +2,13 @@ package com.example.jpablog.user.controller;
 
 import com.example.jpablog.notice.repository.NoticeRepository;
 import com.example.jpablog.user.entity.Member;
+import com.example.jpablog.user.entity.MemberLoginHistory;
 import com.example.jpablog.user.exception.MemberNotFoundException;
 import com.example.jpablog.user.model.MemberReponse;
 import com.example.jpablog.user.model.MemberStatusInput;
 import com.example.jpablog.user.model.ResponseMessage;
 import com.example.jpablog.user.model.UserSearch;
+import com.example.jpablog.user.repository.MemberLoginHistoryRepository;
 import com.example.jpablog.user.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,6 +24,7 @@ public class ApiAdminUserController {
 
     private final MemberRepository memberRepository;
     private final NoticeRepository noticeRepository;
+    private final MemberLoginHistoryRepository memberLoginHistoryRepository;
 
     /*
     @GetMapping("/api/admin/user")
@@ -92,5 +95,13 @@ public class ApiAdminUserController {
         memberRepository.delete(member);
         return ResponseEntity.ok().build();
 
+    }
+
+    @GetMapping("/api/admin/user/login/history")
+    public ResponseEntity<?> MemberLoginHistory(){
+
+        List<MemberLoginHistory> memberLoginHistoryList = memberLoginHistoryRepository.findAll();
+
+        return ResponseEntity.ok().body(memberLoginHistoryList);
     }
 }

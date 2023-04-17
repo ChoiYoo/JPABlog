@@ -43,3 +43,13 @@ create table NOTICE_LIKE
     constraint  FK_NOTICE_LIKE_NOTICE_ID foreign key (NOTICE_ID) references NOTICE (ID),
     constraint  FK_NOTICE_LIKE_MEMBER_ID foreign key (MEMBER_ID) references MEMBER (ID)
 );
+
+create table MEMBER_LOGIN_HISTORY
+(
+    ID          BIGINT auto_increment primary key,
+    MEMBER_ID     BIGINT,
+    EMAIL       VARCHAR(255),
+    USER_NAME   VARCHAR(255),
+    LOGIN_DATE  TIMESTAMP,
+    IP_ADDR   VARCHAR(255)
+);
