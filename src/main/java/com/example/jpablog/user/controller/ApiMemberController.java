@@ -414,7 +414,6 @@ public class ApiMemberController {
         // 블랙리스트 작성
 
         return ResponseEntity.ok().build();
-
     }
 
 
