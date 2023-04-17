@@ -41,4 +41,7 @@ public class Member {
     @Column
     private MemberStatus status;
 
+    @Column
+    private boolean lockYn;
+
 }

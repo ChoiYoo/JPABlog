@@ -104,4 +104,24 @@ public class ApiAdminUserController {
 
         return ResponseEntity.ok().body(memberLoginHistoryList);
     }
+
+    @PatchMapping("/api/admin/user/{id}/lock")
+    public ResponseEntity<?> MemberLock(@PathVariable Long id) {
+
+        Optional<Member> optionalMember = memberRepository.findById(id);
+
+        if(!optionalMember.isPresent()) {
+            return new ResponseEntity<>(ResponseMessage.fail("사용자 정보가 없습니다."), HttpStatus.BAD_REQUEST);
+        }
+
+        Member member = optionalMember.get();
+
+        if(member.isLockYn()) {
+            return new ResponseEntity<>(ResponseMessage.fail("이미 접속제한이 된 사용자입니다."), HttpStatus.BAD_REQUEST);
+        }
+        member.setLockYn(true);
+        memberRepository.save(member);
+
+        return ResponseEntity.ok().body(ResponseMessage.success());
+    }
 }
