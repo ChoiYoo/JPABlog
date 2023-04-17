@@ -11,7 +11,8 @@ create table MEMBER
     PASSWORD    VARCHAR(255),
     PHONE       VARCHAR(255),
     REG_DATE    TIMESTAMP,
-    UPDATE_DATE TIMESTAMP
+    UPDATE_DATE TIMESTAMP,
+    STATUS      INTEGER
 );
 
 -- auto-generated definition

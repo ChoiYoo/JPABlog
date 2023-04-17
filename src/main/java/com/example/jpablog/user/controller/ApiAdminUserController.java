@@ -1,17 +1,16 @@
 package com.example.jpablog.user.controller;
 
 import com.example.jpablog.user.entity.Member;
+import com.example.jpablog.user.exception.MemberNotFoundException;
 import com.example.jpablog.user.model.MemberReponse;
+import com.example.jpablog.user.model.MemberStatusInput;
 import com.example.jpablog.user.model.ResponseMessage;
 import com.example.jpablog.user.model.UserSearch;
 import com.example.jpablog.user.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -57,5 +56,20 @@ public class ApiAdminUserController {
                 , userSearch.getUsername());
 
         return ResponseEntity.ok().body(ResponseMessage.success(memberList));
+    }
+
+    @PatchMapping("/api/admin/user/{id}/status")
+    public ResponseEntity<?> MemberStatus(@PathVariable Long id, @RequestBody MemberStatusInput memberStatusInput){
+
+        Optional<Member> optionalMember = memberRepository.findById(id);
+
+        if(!optionalMember.isPresent()) {
+            return new ResponseEntity<>(ResponseMessage.fail("사용자 정보가 없습니다."), HttpStatus.BAD_REQUEST);
+        }
+        Member member = optionalMember.get();
+
+        member.setStatus(memberStatusInput.getStatus());
+        memberRepository.save(member);
+        return ResponseEntity.ok().build();
     }
 }
