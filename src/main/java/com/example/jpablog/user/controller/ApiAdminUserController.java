@@ -1,5 +1,6 @@
 package com.example.jpablog.user.controller;
 
+import com.example.jpablog.notice.repository.NoticeRepository;
 import com.example.jpablog.user.entity.Member;
 import com.example.jpablog.user.exception.MemberNotFoundException;
 import com.example.jpablog.user.model.MemberReponse;
@@ -20,6 +21,7 @@ import java.util.Optional;
 public class ApiAdminUserController {
 
     private final MemberRepository memberRepository;
+    private final NoticeRepository noticeRepository;
 
     /*
     @GetMapping("/api/admin/user")
@@ -71,5 +73,24 @@ public class ApiAdminUserController {
         member.setStatus(memberStatusInput.getStatus());
         memberRepository.save(member);
         return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/api/admin/user/{id}")
+    public ResponseEntity<?> DeleteMember(@PathVariable Long id) {
+        Optional<Member> optionalMember = memberRepository.findById(id);
+
+        if(!optionalMember.isPresent()) {
+            return new ResponseEntity<>(ResponseMessage.fail("사용자 정보가 없습니다."), HttpStatus.BAD_REQUEST);
+        }
+
+        Member member = optionalMember.get();
+
+        if (noticeRepository.countByMember(member) > 0) {
+            return new ResponseEntity<>(ResponseMessage.fail("사용자가 작성한 공지사항이 있습니다."), HttpStatus.BAD_REQUEST);
+        }
+
+        memberRepository.delete(member);
+        return ResponseEntity.ok().build();
+
     }
 }
