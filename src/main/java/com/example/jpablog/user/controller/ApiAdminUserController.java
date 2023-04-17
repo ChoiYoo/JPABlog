@@ -3,12 +3,14 @@ package com.example.jpablog.user.controller;
 import com.example.jpablog.user.entity.Member;
 import com.example.jpablog.user.model.MemberReponse;
 import com.example.jpablog.user.model.ResponseMessage;
+import com.example.jpablog.user.model.UserSearch;
 import com.example.jpablog.user.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -34,7 +36,6 @@ public class ApiAdminUserController {
     }
 
      */
-
     @GetMapping("/api/admin/user/{id}")
     public ResponseEntity<?> memberDetail(@PathVariable Long id) {
 
@@ -45,5 +46,16 @@ public class ApiAdminUserController {
         }
 
         return ResponseEntity.ok().body(ResponseMessage.success(member));
+    }
+
+    @GetMapping("/api/admin/user/search")
+    public ResponseEntity<?> findMember(@RequestBody UserSearch userSearch) {
+
+        List<Member> memberList =
+        memberRepository.findByEmailContainsOrPasswordContainsOrUserNameContains(userSearch.getEmail()
+                , userSearch.getPhone()
+                , userSearch.getUsername());
+
+        return ResponseEntity.ok().body(ResponseMessage.success(memberList));
     }
 }
