@@ -1,5 +1,6 @@
 package com.example.jpablog.user.entity;
 
+import com.example.jpablog.user.model.MemberStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -36,5 +37,11 @@ public class Member {
 
     @Column
     private LocalDateTime updateDate;
+
+    @Column
+    private MemberStatus status;
+
+    @Column
+    private boolean lockYn;
 
 }
