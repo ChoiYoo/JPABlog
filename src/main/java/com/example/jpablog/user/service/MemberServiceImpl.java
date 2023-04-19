@@ -1,10 +1,7 @@
 package com.example.jpablog.user.service;
 
 import com.example.jpablog.user.entity.Member;
-import com.example.jpablog.user.model.MemberNoticeCount;
-import com.example.jpablog.user.model.MemberReponse;
-import com.example.jpablog.user.model.MemberStatus;
-import com.example.jpablog.user.model.MemberSumary;
+import com.example.jpablog.user.model.*;
 import com.example.jpablog.user.repository.MemberCustomRepository;
 import com.example.jpablog.user.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -48,6 +45,11 @@ public class MemberServiceImpl implements MemberService{
     public List<MemberNoticeCount> getMemberNoticeCount() {
 
         return memberCustomRepository.findMemberNoticeCount();
+    }
 
+    @Override
+    public List<MemberLogCount> getMemberLogCount() {
+
+        return memberCustomRepository.findMemberLogCount();
     }
 }

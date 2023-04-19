@@ -1,6 +1,7 @@
 package com.example.jpablog.user.repository;
 
 import com.example.jpablog.user.entity.Member;
+import com.example.jpablog.user.model.MemberLogCount;
 import com.example.jpablog.user.model.MemberNoticeCount;
 import com.example.jpablog.user.model.MemberStatus;
 import jakarta.persistence.EntityManager;
@@ -26,5 +27,15 @@ public class MemberCustomRepository{
         List<MemberNoticeCount> list = em.createNativeQuery(sql).getResultList();
         return list;
 
+    }
+
+    public List<MemberLogCount> findMemberLogCount() {
+        String sql = "select m.id, m.email, m.user_name" +
+                ", (select count(*) from notice n where n.member_id = m.id) notice_count " +
+                ", (select count(*) from notice_like nl where nl.member_id = m.id) notice_like_count " +
+                "from member m";
+
+        List<MemberLogCount> list = em.createNativeQuery(sql).getResultList();
+        return list;
     }
 }
