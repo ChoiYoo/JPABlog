@@ -3,10 +3,7 @@ package com.example.jpablog.user.controller;
 import com.example.jpablog.notice.repository.NoticeRepository;
 import com.example.jpablog.user.entity.Member;
 import com.example.jpablog.user.entity.MemberLoginHistory;
-import com.example.jpablog.user.model.MemberStatusInput;
-import com.example.jpablog.user.model.MemberSumary;
-import com.example.jpablog.user.model.ResponseMessage;
-import com.example.jpablog.user.model.UserSearch;
+import com.example.jpablog.user.model.*;
 import com.example.jpablog.user.repository.MemberLoginHistoryRepository;
 import com.example.jpablog.user.repository.MemberRepository;
 import com.example.jpablog.user.service.MemberService;
@@ -150,10 +147,21 @@ public class ApiAdminUserController {
     @GetMapping("/api/admin/user/status/count")
     public ResponseEntity<?> MemberStatusCount(){
 
+//        memberRepository.countByStatus(MemberStatus.Using);
+//        memberRepository.countByStatus(MemberStatus.Stop);
+
         MemberSumary memberSumary = memberService.getMemberStatusCount();
 
         return ResponseEntity.ok().body(ResponseMessage.success(memberSumary));
 
+    }
+
+    @GetMapping("/api/admin/user/today")
+    public ResponseEntity<?> todayMember() {
+
+        List<Member> members = memberService.getTodayMembers();
+
+        return ResponseEntity.ok().body(ResponseMessage.success(members));
 
     }
 }
