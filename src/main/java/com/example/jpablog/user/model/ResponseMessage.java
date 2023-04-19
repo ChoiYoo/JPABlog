@@ -1,15 +1,10 @@
 package com.example.jpablog.user.model;
 
-import com.example.jpablog.user.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-
-import java.util.List;
-import java.util.Optional;
 
 @Data @Builder
 @NoArgsConstructor @AllArgsConstructor
