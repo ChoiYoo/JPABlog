@@ -3,13 +3,13 @@ package com.example.jpablog.user.controller;
 import com.example.jpablog.notice.repository.NoticeRepository;
 import com.example.jpablog.user.entity.Member;
 import com.example.jpablog.user.entity.MemberLoginHistory;
-import com.example.jpablog.user.exception.MemberNotFoundException;
-import com.example.jpablog.user.model.MemberReponse;
 import com.example.jpablog.user.model.MemberStatusInput;
+import com.example.jpablog.user.model.MemberSumary;
 import com.example.jpablog.user.model.ResponseMessage;
 import com.example.jpablog.user.model.UserSearch;
 import com.example.jpablog.user.repository.MemberLoginHistoryRepository;
 import com.example.jpablog.user.repository.MemberRepository;
+import com.example.jpablog.user.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +25,8 @@ public class ApiAdminUserController {
     private final MemberRepository memberRepository;
     private final NoticeRepository noticeRepository;
     private final MemberLoginHistoryRepository memberLoginHistoryRepository;
+
+    private final MemberService memberService;
 
     /*
     @GetMapping("/api/admin/user")
@@ -143,5 +145,15 @@ public class ApiAdminUserController {
         memberRepository.save(member);
 
         return ResponseEntity.ok().body(ResponseMessage.success());
+    }
+
+    @GetMapping("/api/admin/user/status/count")
+    public ResponseEntity<?> MemberStatusCount(){
+
+        MemberSumary memberSumary = memberService.getMemberStatusCount();
+
+        return ResponseEntity.ok().body(ResponseMessage.success(memberSumary));
+
+
     }
 }
