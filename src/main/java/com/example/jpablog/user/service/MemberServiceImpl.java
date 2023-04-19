@@ -1,9 +1,11 @@
 package com.example.jpablog.user.service;
 
 import com.example.jpablog.user.entity.Member;
+import com.example.jpablog.user.model.MemberNoticeCount;
 import com.example.jpablog.user.model.MemberReponse;
 import com.example.jpablog.user.model.MemberStatus;
 import com.example.jpablog.user.model.MemberSumary;
+import com.example.jpablog.user.repository.MemberCustomRepository;
 import com.example.jpablog.user.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,7 @@ import java.util.List;
 public class MemberServiceImpl implements MemberService{
 
     private final MemberRepository memberRepository;
+    private final MemberCustomRepository memberCustomRepository;
 
     @Override
     public MemberSumary getMemberStatusCount() {
@@ -38,6 +41,13 @@ public class MemberServiceImpl implements MemberService{
         LocalDateTime endDate = startDate.plusDays(1);
 
         return memberRepository.findToday(startDate, endDate);
+
+    }
+
+    @Override
+    public List<MemberNoticeCount> getMemberNoticeCount() {
+
+        return memberCustomRepository.findMemberNoticeCount();
 
     }
 }

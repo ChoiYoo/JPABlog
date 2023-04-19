@@ -164,4 +164,13 @@ public class ApiAdminUserController {
         return ResponseEntity.ok().body(ResponseMessage.success(members));
 
     }
+
+    @GetMapping("/api/admin/user/notice/count")
+    public ResponseEntity<?> memberNoticeCount() {
+
+        List<MemberNoticeCount> memberNoticeCountList = memberService.getMemberNoticeCount();
+
+        return ResponseEntity.ok().body(ResponseMessage.success(memberNoticeCountList));
+
+    }
 }
