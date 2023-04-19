@@ -52,4 +52,10 @@ public class MemberServiceImpl implements MemberService{
 
         return memberCustomRepository.findMemberLogCount();
     }
+
+    @Override
+    public List<MemberLogCount> getMemberLikeBest() {
+
+        return memberCustomRepository.findMemberLikeBest();
+    }
 }

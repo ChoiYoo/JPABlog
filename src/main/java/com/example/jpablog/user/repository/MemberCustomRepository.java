@@ -38,4 +38,14 @@ public class MemberCustomRepository{
         List<MemberLogCount> list = em.createNativeQuery(sql).getResultList();
         return list;
     }
+
+    public List<MemberLogCount> findMemberLikeBest() {
+        String sql = "select t1.id, t1.email, t1.user_name, t1.notice_like_count " +
+                "from (select m.*, (select count(*) from notice_like nl where nl.member_id = m.id) " +
+                "as notice_like_count from member m) t1 order by t1.notice_like_count desc";
+
+        List<MemberLogCount> list = em.createNativeQuery(sql).getResultList();
+        return list;
+
+    }
 }

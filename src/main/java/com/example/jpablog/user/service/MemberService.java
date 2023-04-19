@@ -16,4 +16,6 @@ public interface MemberService {
     List<MemberNoticeCount> getMemberNoticeCount();
 
     List<MemberLogCount> getMemberLogCount();
+
+    List<MemberLogCount> getMemberLikeBest();
 }
