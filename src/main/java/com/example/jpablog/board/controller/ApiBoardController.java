@@ -14,6 +14,7 @@ import com.example.jpablog.notice.model.NoticeModel;
 import com.example.jpablog.notice.model.ResponseError;
 import com.example.jpablog.notice.repository.NoticeRepository;
 import com.example.jpablog.user.model.ResponseMessage;
+import jakarta.persistence.GeneratedValue;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -88,6 +89,17 @@ public class ApiBoardController {
             return ResponseEntity.ok().body(ResponseMessage.fail(result.getMessage()));
         }
         return ResponseEntity.ok().body(ResponseMessage.success());
+    }
+
+    /**
+     * 64. 게시판타입의 목록을 리턴하는 API를 작성해 보세요.
+     */
+    @GetMapping("/api/board/type")
+    public ResponseEntity<?> boardType() {
+
+        List<BoardType> boardTypeList = boardService.getAllBoardType();
+
+        return ResponseEntity.ok().body(ResponseMessage.success(boardTypeList));
 
     }
 }
