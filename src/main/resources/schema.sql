@@ -55,3 +55,28 @@ create table MEMBER_LOGIN_HISTORY
     LOGIN_DATE  TIMESTAMP,
     IP_ADDR   VARCHAR(255)
 );
+
+create table BOARD_TYPE
+(
+    ID          BIGINT auto_increment primary key,
+    BOARD_NAME  VARCHAR(255),
+    REG_DATE    TIMESTAMP,
+    UPDATE_DATE TIMESTAMP,
+
+    USING_YN    BOOLEAN
+);
+
+
+-- auto-generated definition
+create table BOARD
+(
+    ID            BIGINT auto_increment primary key,
+    CONTENTS      VARCHAR(255),
+    REG_DATE      TIMESTAMP,
+    TITLE         VARCHAR(255),
+    BOARD_TYPE_ID BIGINT,
+    MEMBER_ID       BIGINT,
+
+    constraint FK_BOARD_BOARD_TYPE_ID foreign key (BOARD_TYPE_ID) references BOARD_TYPE (ID),
+    constraint FK_BOARD_MEMBER_ID foreign key (MEMBER_ID) references MEMBER (ID)
+);
