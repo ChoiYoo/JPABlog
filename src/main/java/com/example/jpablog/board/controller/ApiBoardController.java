@@ -2,6 +2,7 @@ package com.example.jpablog.board.controller;
 
 import com.example.jpablog.board.entity.BoardType;
 import com.example.jpablog.board.model.BoardTypeInput;
+import com.example.jpablog.board.model.BoardTypeUsing;
 import com.example.jpablog.board.model.ServiceResult;
 import com.example.jpablog.board.service.BoardService;
 import com.example.jpablog.notice.entity.Notice;
@@ -100,6 +101,20 @@ public class ApiBoardController {
         List<BoardType> boardTypeList = boardService.getAllBoardType();
 
         return ResponseEntity.ok().body(ResponseMessage.success(boardTypeList));
+    }
+
+    /**
+     * 65. 게시판타입의 사용여부를 설정하는 API를 작성해 보세요.
+     */
+    @PatchMapping("/api/board/type/{id}/using")
+    public ResponseEntity<?> usingBoardType(@PathVariable Long id, @RequestBody BoardTypeUsing boardTypeUsing){
+
+        ServiceResult result = boardService.setBoardTypeUsing(id, boardTypeUsing);
+        if (!result.isResult()){
+            return ResponseEntity.ok().body(ResponseMessage.fail(result.getMessage()));
+        }
+
+        return ResponseEntity.ok().body(ResponseMessage.success());
 
     }
 }
