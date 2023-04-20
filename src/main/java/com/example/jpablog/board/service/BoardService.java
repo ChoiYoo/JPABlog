@@ -1,5 +1,6 @@
 package com.example.jpablog.board.service;
 
+import com.example.jpablog.board.entity.BoardBadReport;
 import com.example.jpablog.board.entity.BoardType;
 import com.example.jpablog.board.model.*;
 
@@ -30,4 +31,6 @@ public interface BoardService {
     ServiceResult setBoardUnLikes(Long id, String email);
 
     ServiceResult addBadReport(Long id, String email, BoardBadReportInput boardBadReportInput);
+
+    List<BoardBadReport> badReportList();
 }

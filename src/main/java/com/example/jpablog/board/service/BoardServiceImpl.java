@@ -267,4 +267,10 @@ public class BoardServiceImpl implements BoardService {
 
 
     }
+
+    @Override
+    public List<BoardBadReport> badReportList() {
+
+        return boardBadReportRepository.findAll();
+    }
 }
