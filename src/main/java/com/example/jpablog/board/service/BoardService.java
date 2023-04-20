@@ -26,4 +26,6 @@ public interface BoardService {
     ServiceResult setBoardHits(Long id, String email);
 
     ServiceResult setBoardLikes(Long id, String email);
+
+    ServiceResult setBoardUnLikes(Long id, String email);
 }

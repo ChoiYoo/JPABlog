@@ -7,8 +7,12 @@ import com.example.jpablog.user.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface BoardLikesRepository extends JpaRepository<BoardLikes, Long>{
 
     long countByBoardAndMember(Board board, Member member);
+
+    Optional<BoardLikes> findByBoardAndMember(Board board, Member member);
 }

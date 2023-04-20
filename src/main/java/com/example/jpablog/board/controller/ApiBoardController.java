@@ -198,6 +198,20 @@ public class ApiBoardController {
 
         ServiceResult result = boardService.setBoardLikes(id, email);
         return ResponseResult.result(result);
+    }
+    /**
+     * 72. 게시글의 좋아요한 내용을 취소하는 API를 작성해 보세요.
+     */
+    @PutMapping("/api/board/{id}/unlikes")
+    public ResponseEntity<?> boardUnLikes(@PathVariable Long id, @RequestHeader("JWT-TOKEN") String token){
+        String email = "";
+        try {
+            email = JWTUtils.getIssuer(token);
+        } catch (JWTVerificationException e) {
+            return ResponseResult.fail("토큰 정보가 정확하지 않습니다.");
+        }
 
+        ServiceResult result = boardService.setBoardUnLikes(id, email);
+        return ResponseResult.result(result);
     }
 }
