@@ -1,11 +1,9 @@
 package com.example.jpablog.board.controller;
 
 import com.example.jpablog.board.entity.BoardType;
-import com.example.jpablog.board.model.BoardTypeCount;
-import com.example.jpablog.board.model.BoardTypeInput;
-import com.example.jpablog.board.model.BoardTypeUsing;
-import com.example.jpablog.board.model.ServiceResult;
+import com.example.jpablog.board.model.*;
 import com.example.jpablog.board.service.BoardService;
+import com.example.jpablog.common.model.ResponseResult;
 import com.example.jpablog.notice.entity.Notice;
 import com.example.jpablog.notice.exception.AlreadyDeletedException;
 import com.example.jpablog.notice.exception.DuplicateNoticeException;
@@ -149,5 +147,20 @@ public class ApiBoardController {
 
         ServiceResult result = boardService.setBoardTop(id, false);
         return ResponseEntity.ok().body(result);
+    }
+
+    /**
+     * 69. 게시글의 게시기간을 시작일과 종료일로 설정하는 API를 작성해 보세요.
+     */
+    @PatchMapping("/api/board/{id}/publish")
+    public ResponseEntity<?> boardPeriod(@PathVariable Long id, @RequestBody BoardPeriod boardPeriod){
+
+        ServiceResult result = boardService.setBoardPeriod(id, boardPeriod);
+
+        if(!result.isResult()){
+            return ResponseResult.fail(result.getMessage());
+        }
+        return ResponseResult.success();
+
     }
 }

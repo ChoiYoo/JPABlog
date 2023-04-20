@@ -78,6 +78,9 @@ create table BOARD
     MEMBER_ID       BIGINT,
     TOP_YN        BOOLEAN,
 
+    START_DATE  DATE,
+    END_DATE    DATE,
+
     constraint FK_BOARD_BOARD_TYPE_ID foreign key (BOARD_TYPE_ID) references BOARD_TYPE (ID),
     constraint FK_BOARD_MEMBER_ID foreign key (MEMBER_ID) references MEMBER (ID)
 );

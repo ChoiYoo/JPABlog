@@ -3,10 +3,7 @@ package com.example.jpablog.board.service;
 import ch.qos.logback.core.util.OptionHelper;
 import com.example.jpablog.board.entity.Board;
 import com.example.jpablog.board.entity.BoardType;
-import com.example.jpablog.board.model.BoardTypeCount;
-import com.example.jpablog.board.model.BoardTypeInput;
-import com.example.jpablog.board.model.BoardTypeUsing;
-import com.example.jpablog.board.model.ServiceResult;
+import com.example.jpablog.board.model.*;
 import com.example.jpablog.board.repository.BoardRepository;
 import com.example.jpablog.board.repository.BoardTypeCustomRepository;
 import com.example.jpablog.board.repository.BoardTypeRepository;
@@ -136,5 +133,23 @@ public class BoardServiceImpl implements BoardService {
         boardRepository.save(board);
 
         return ServiceResult.success();
+    }
+
+    @Override
+    public ServiceResult setBoardPeriod(Long id, BoardPeriod boardPeriod) {
+        Optional<Board> optionalBoard = boardRepository.findById(id);
+        if(!optionalBoard.isPresent()){
+            return ServiceResult.fail("게시글이 존재하지 않습니다.");
+        }
+
+        Board board = optionalBoard.get();
+
+        board.setStartDate(boardPeriod.getStartDate());
+        board.setEndDate(boardPeriod.getEndDate());
+
+        boardRepository.save(board);
+
+        return ServiceResult.success();
+
     }
 }
