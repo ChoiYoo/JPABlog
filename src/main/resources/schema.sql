@@ -55,3 +55,67 @@ create table MEMBER_LOGIN_HISTORY
     LOGIN_DATE  TIMESTAMP,
     IP_ADDR   VARCHAR(255)
 );
+
+create table BOARD_TYPE
+(
+    ID          BIGINT auto_increment primary key,
+    BOARD_NAME  VARCHAR(255),
+    REG_DATE    TIMESTAMP,
+    UPDATE_DATE TIMESTAMP,
+
+    USING_YN    BOOLEAN
+);
+
+
+-- auto-generated definition
+create table BOARD
+(
+    ID            BIGINT auto_increment primary key,
+    CONTENTS      VARCHAR(255),
+    REG_DATE      TIMESTAMP,
+    TITLE         VARCHAR(255),
+    BOARD_TYPE_ID BIGINT,
+    MEMBER_ID       BIGINT,
+    TOP_YN        BOOLEAN,
+
+    START_DATE  DATE,
+    END_DATE    DATE,
+
+    constraint FK_BOARD_BOARD_TYPE_ID foreign key (BOARD_TYPE_ID) references BOARD_TYPE (ID),
+    constraint FK_BOARD_MEMBER_ID foreign key (MEMBER_ID) references MEMBER (ID)
+);
+
+create table BOARD_HITS
+(
+    ID          BIGINT auto_increment primary key,
+    REG_DATE    TIMESTAMP,
+    BOARD_ID    BIGINT,
+    MEMBER_ID     BIGINT,
+    constraint FK_BOARD_HITS_BOARD_ID foreign key (BOARD_ID) references BOARD (ID),
+    constraint FK_BOARD_HITS_MEMBER_ID foreign key (MEMBER_ID) references MEMBER (ID)
+);
+
+create table BOARD_LIKES
+(
+    ID          BIGINT auto_increment primary key,
+    REG_DATE    TIMESTAMP,
+    BOARD_ID    BIGINT,
+    MEMBER_ID     BIGINT,
+    constraint FK_BOARD_LIKE_BOARD_ID foreign key (BOARD_ID) references BOARD (ID),
+    constraint FK_BOARD_LIKE_MEMBER_ID foreign key (MEMBER_ID) references MEMBER (ID)
+);
+
+create table BOARD_BAD_REPORT
+(
+    ID             BIGINT auto_increment primary key,
+    BOARD_CONTENTS VARCHAR(255),
+    BOARD_ID       BIGINT,
+    BOARD_REG_DATE TIMESTAMP,
+    BOARD_TITLE    VARCHAR(255),
+    BOARD_MEMBER_ID  BIGINT,
+    COMMENTS       VARCHAR(255),
+    REG_DATE       TIMESTAMP,
+    USER_EMAIL     VARCHAR(255),
+    MEMBER_ID      BIGINT,
+    USER_NAME      VARCHAR(255)
+);
