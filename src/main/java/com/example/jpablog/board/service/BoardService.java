@@ -28,4 +28,6 @@ public interface BoardService {
     ServiceResult setBoardLikes(Long id, String email);
 
     ServiceResult setBoardUnLikes(Long id, String email);
+
+    ServiceResult addBadReport(Long id, String email, BoardBadReportInput boardBadReportInput);
 }

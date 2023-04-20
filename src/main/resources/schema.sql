@@ -104,3 +104,18 @@ create table BOARD_LIKES
     constraint FK_BOARD_LIKE_BOARD_ID foreign key (BOARD_ID) references BOARD (ID),
     constraint FK_BOARD_LIKE_MEMBER_ID foreign key (MEMBER_ID) references MEMBER (ID)
 );
+
+create table BOARD_BAD_REPORT
+(
+    ID             BIGINT auto_increment primary key,
+    BOARD_CONTENTS VARCHAR(255),
+    BOARD_ID       BIGINT,
+    BOARD_REG_DATE TIMESTAMP,
+    BOARD_TITLE    VARCHAR(255),
+    BOARD_MEMBER_ID  BIGINT,
+    COMMENTS       VARCHAR(255),
+    REG_DATE       TIMESTAMP,
+    USER_EMAIL     VARCHAR(255),
+    MEMBER_ID      BIGINT,
+    USER_NAME      VARCHAR(255)
+);

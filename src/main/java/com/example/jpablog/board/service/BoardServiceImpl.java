@@ -1,10 +1,7 @@
 package com.example.jpablog.board.service;
 
 import ch.qos.logback.core.util.OptionHelper;
-import com.example.jpablog.board.entity.Board;
-import com.example.jpablog.board.entity.BoardHits;
-import com.example.jpablog.board.entity.BoardLikes;
-import com.example.jpablog.board.entity.BoardType;
+import com.example.jpablog.board.entity.*;
 import com.example.jpablog.board.model.*;
 import com.example.jpablog.board.repository.*;
 import com.example.jpablog.user.entity.Member;
@@ -27,6 +24,7 @@ public class BoardServiceImpl implements BoardService {
     private final BoardHitsRepository boardHitsRepository;
     private final MemberRepository memberRepository;
     private final BoardLikesRepository boardLikesRepository;
+    private final BoardBadReportRepository boardBadReportRepository;
     @Override
     public ServiceResult addBoard(BoardTypeInput boardTypeInput) {
 
@@ -235,6 +233,38 @@ public class BoardServiceImpl implements BoardService {
         boardLikesRepository.delete(boardLikes);
 
         return ServiceResult.success();
+
+    }
+
+    @Override
+    public ServiceResult addBadReport(Long id, String email, BoardBadReportInput boardBadReportInput) {
+        Optional<Board> optionalBoard = boardRepository.findById(id);
+        if(!optionalBoard.isPresent()){
+            return ServiceResult.fail("게시글이 존재하지 않습니다.");
+        }
+        Board board = optionalBoard.get();
+
+        Optional<Member> optionalMember = memberRepository.findByEmail(email);
+        if(!optionalMember.isPresent()){
+            return ServiceResult.fail("회원 정보가 존재하지 않습니다.");
+        }
+        Member member = optionalMember.get();
+
+        boardBadReportRepository.save(BoardBadReport.builder()
+                .memberId(member.getId())
+                .userName(member.getUserName())
+                .userEmail(member.getEmail())
+                .boardId(board.getId())
+                .boardTitle(board.getTitle())
+                .boardContents(board.getContents())
+                .boardMemberId(board.getMember().getId())
+                .boardRegDate(board.getRegDate())
+                .comments(boardBadReportInput.getComments())
+                .regDate(LocalDateTime.now())
+                .build());
+
+        return ServiceResult.success();
+
 
     }
 }
