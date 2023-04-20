@@ -119,3 +119,17 @@ create table BOARD_BAD_REPORT
     MEMBER_ID      BIGINT,
     USER_NAME      VARCHAR(255)
 );
+
+create table BOARD_SCRAP
+(
+    ID             BIGINT auto_increment primary key,
+    BOARD_CONTENTS VARCHAR(255),
+    BOARD_ID       BIGINT,
+    BOARD_REG_DATE TIMESTAMP,
+    BOARD_TITLE    VARCHAR(255),
+    BOARD_TYPE_ID  BIGINT,
+    BOARD_MEMBER_ID  BIGINT,
+    REG_DATE       TIMESTAMP,
+    MEMBER_ID        BIGINT,
+    constraint FK_BOARD_SCRAP_MEMBER_ID foreign key (MEMBER_ID) references MEMBER (ID)
+);
