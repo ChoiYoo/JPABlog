@@ -137,8 +137,17 @@ public class ApiBoardController {
     @PatchMapping ("/api/board/{id}/top")
     public ResponseEntity<?> boardPostTop(@PathVariable Long id){
 
-        ServiceResult result = boardService.setBoardTop(id);
+        ServiceResult result = boardService.setBoardTop(id, true);
         return ResponseEntity.ok().body(result);
+    }
 
+    /**
+     * 68. 최상단에 게시된 게시글을 최상단에서 해제하는 API를 작성해 보세요.
+     */
+    @PatchMapping ("/api/board/{id}/top/clear")
+    public ResponseEntity<?> boardPostTopClear(@PathVariable Long id){
+
+        ServiceResult result = boardService.setBoardTop(id, false);
+        return ResponseEntity.ok().body(result);
     }
 }
