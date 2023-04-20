@@ -3,9 +3,11 @@ package com.example.jpablog.board.service;
 import com.example.jpablog.board.entity.BoardType;
 import com.example.jpablog.board.model.BoardTypeInput;
 import com.example.jpablog.board.model.ServiceResult;
+import com.example.jpablog.board.repository.BoardRepository;
 import com.example.jpablog.board.repository.BoardTypeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.DeleteMapping;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -15,6 +17,7 @@ import java.util.Optional;
 public class BoardServiceImpl implements BoardService {
 
     private final BoardTypeRepository boardTypeRepository;
+    private final BoardRepository boardRepository;
     @Override
     public ServiceResult addBoard(BoardTypeInput boardTypeInput) {
 
@@ -58,7 +61,23 @@ public class BoardServiceImpl implements BoardService {
         boardTypeRepository.save(boardType);
 
         return ServiceResult.success();
+    }
 
+    @Override
+    public ServiceResult deleteBoard(Long id) {
 
+        Optional<BoardType> optionalBoardType = boardTypeRepository.findById(id);
+        if(!optionalBoardType.isPresent()){
+            return ServiceResult.fail("삭제할 게시판 타입이 없습니다.");
+        }
+
+        BoardType boardType = optionalBoardType.get();
+
+        if (boardRepository.countByBoardType(boardType) > 0) {
+            return ServiceResult.fail("삭제할 게시판 타입의 게시글이 존재합니다.");
+        }
+
+        boardTypeRepository.delete(boardType);
+        return ServiceResult.success();
     }
 }
