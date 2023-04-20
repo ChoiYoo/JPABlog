@@ -1,6 +1,7 @@
 package com.example.jpablog.board.service;
 
 import com.example.jpablog.board.entity.BoardType;
+import com.example.jpablog.board.model.BoardTypeCount;
 import com.example.jpablog.board.model.BoardTypeInput;
 import com.example.jpablog.board.model.BoardTypeUsing;
 import com.example.jpablog.board.model.ServiceResult;
@@ -18,4 +19,6 @@ public interface BoardService {
     List<BoardType> getAllBoardType();
 
     ServiceResult setBoardTypeUsing(Long id, BoardTypeUsing boardTypeUsing);
+
+    List<BoardTypeCount> getBoardTypeCount();
 }

@@ -1,10 +1,12 @@
 package com.example.jpablog.board.service;
 
 import com.example.jpablog.board.entity.BoardType;
+import com.example.jpablog.board.model.BoardTypeCount;
 import com.example.jpablog.board.model.BoardTypeInput;
 import com.example.jpablog.board.model.BoardTypeUsing;
 import com.example.jpablog.board.model.ServiceResult;
 import com.example.jpablog.board.repository.BoardRepository;
+import com.example.jpablog.board.repository.BoardTypeCustomRepository;
 import com.example.jpablog.board.repository.BoardTypeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,7 @@ public class BoardServiceImpl implements BoardService {
 
     private final BoardTypeRepository boardTypeRepository;
     private final BoardRepository boardRepository;
+    private final BoardTypeCustomRepository  boardTypeCustomRepository;
     @Override
     public ServiceResult addBoard(BoardTypeInput boardTypeInput) {
 
@@ -103,5 +106,11 @@ public class BoardServiceImpl implements BoardService {
         boardTypeRepository.save(boardType);
 
         return ServiceResult.success();
+    }
+
+    @Override
+    public List<BoardTypeCount> getBoardTypeCount() {
+
+        return boardTypeCustomRepository.getBoardTypeCount();
     }
 }
