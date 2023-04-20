@@ -7,4 +7,6 @@ import com.example.jpablog.board.model.ServiceResult;
 public interface BoardService {
 
     ServiceResult addBoard(BoardTypeInput boardTypeInput);
+
+    ServiceResult updateBoard(long id, BoardTypeInput boardTypeInput);
 }

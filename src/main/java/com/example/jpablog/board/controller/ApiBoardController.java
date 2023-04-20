@@ -55,4 +55,25 @@ public class ApiBoardController {
 
         return ResponseEntity.ok().build();
     }
+
+    /**
+     * 62. 게시판타입명을 수정하는 API를 작성해 보세요.
+     * - 게시판명이 동일할 경우 "수정할 이름이 동일한 게시판명 입니다." 리턴
+     */
+    @PutMapping("/api/board/type/{id}")
+    public ResponseEntity<?> updateBoardType(@PathVariable Long id, @RequestBody @Valid BoardTypeInput boardTypeInput, Errors errors) {
+
+        if(errors.hasErrors()){
+            List<ResponseError> responseErrors = ResponseError.of(errors.getAllErrors());
+            return new ResponseEntity<>(ResponseMessage.fail("입력 값이 정확하지 않습니다.", responseErrors), HttpStatus.BAD_REQUEST);
+        }
+
+        ServiceResult result = boardService.updateBoard(id, boardTypeInput);
+        if (!result.isResult()) {
+            return ResponseEntity.ok().body(ResponseMessage.fail(result.getMessage()));
+        }
+
+        return ResponseEntity.ok().build();
+
+    }
 }
