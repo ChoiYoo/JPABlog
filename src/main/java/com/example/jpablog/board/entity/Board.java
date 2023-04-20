@@ -32,4 +32,7 @@ public class Board {
 
     @Column
     private LocalDateTime regDate;
+
+    @Column
+    private boolean topYn;
 }

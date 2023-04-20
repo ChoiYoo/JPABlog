@@ -76,6 +76,7 @@ create table BOARD
     TITLE         VARCHAR(255),
     BOARD_TYPE_ID BIGINT,
     MEMBER_ID       BIGINT,
+    TOP_YN        BOOLEAN,
 
     constraint FK_BOARD_BOARD_TYPE_ID foreign key (BOARD_TYPE_ID) references BOARD_TYPE (ID),
     constraint FK_BOARD_MEMBER_ID foreign key (MEMBER_ID) references MEMBER (ID)
