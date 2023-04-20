@@ -84,3 +84,13 @@ create table BOARD
     constraint FK_BOARD_BOARD_TYPE_ID foreign key (BOARD_TYPE_ID) references BOARD_TYPE (ID),
     constraint FK_BOARD_MEMBER_ID foreign key (MEMBER_ID) references MEMBER (ID)
 );
+
+create table BOARD_HITS
+(
+    ID          BIGINT auto_increment primary key,
+    REG_DATE    TIMESTAMP,
+    BOARD_ID    BIGINT,
+    MEMBER_ID     BIGINT,
+    constraint FK_BOARD_HITS_BOARD_ID foreign key (BOARD_ID) references BOARD (ID),
+    constraint FK_BOARD_HITS_MEMBER_ID foreign key (MEMBER_ID) references MEMBER (ID)
+);
