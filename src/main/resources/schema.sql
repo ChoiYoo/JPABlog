@@ -133,3 +133,18 @@ create table BOARD_SCRAP
     MEMBER_ID        BIGINT,
     constraint FK_BOARD_SCRAP_MEMBER_ID foreign key (MEMBER_ID) references MEMBER (ID)
 );
+
+create table BOARD_BOOKMARK
+(
+    ID             BIGINT auto_increment primary key,
+    MEMBER_ID        BIGINT,
+
+    BOARD_ID       BIGINT,
+    BOARD_TYPE_ID  BIGINT,
+    BOARD_TITLE    VARCHAR(255),
+    BOARD_URL      VARCHAR(255),
+
+    REG_DATE       TIMESTAMP,
+
+    constraint FK_BOARD_BOOKMARK_MEMBER_ID foreign key (MEMBER_ID) references MEMBER (ID)
+);
