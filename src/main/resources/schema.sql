@@ -161,3 +161,14 @@ create table MEMBER_INTEREST
     constraint FK_MEMBER_INTEREST_MEMBER_ID foreign key (MEMBER_ID) references MEMBER (ID),
     constraint FK_MEMBER_INTEREST_INTEREST_MEMBER_ID foreign key (INTEREST_MEMBER_ID) references MEMBER (ID)
 );
+
+create table BOARD_COMMENT
+(
+    ID                  BIGINT auto_increment primary key,
+    COMMENTS            VARCHAR(255),
+    REG_DATE            TIMESTAMP,
+    BOARD_ID            BIGINT,
+    MEMBER_ID           BIGINT,
+    constraint          FK_BOARD_COMMENT_MEMBER_ID foreign key (MEMBER_ID) references MEMBER (ID),
+    constraint          FK_BOARD_COMMENT_BOARD_ID foreign key (BOARD_ID) references BOARD (ID)
+);
