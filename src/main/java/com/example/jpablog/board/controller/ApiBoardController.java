@@ -1,9 +1,11 @@
 package com.example.jpablog.board.controller;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.example.jpablog.board.entity.Board;
 import com.example.jpablog.board.entity.BoardType;
 import com.example.jpablog.board.model.*;
 import com.example.jpablog.board.service.BoardService;
+import com.example.jpablog.common.exception.BizException;
 import com.example.jpablog.common.model.ResponseResult;
 import com.example.jpablog.notice.entity.Notice;
 import com.example.jpablog.notice.exception.AlreadyDeletedException;
@@ -235,6 +237,20 @@ public class ApiBoardController {
 
     }
     /**
-     *
+     *85. AOP의 Around를 이용하여 게시판 상세 조회에 대한 히스토리 기록하는 기능을 작성해 보세요.
      */
+    @GetMapping("/api/board/{id}")
+    public ResponseEntity<?> detail(@PathVariable Long id){
+
+        Board board = null;
+
+        try{
+            board = boardService.detail(id);
+        } catch (BizException e) {
+            return ResponseResult.fail(e.getMessage());
+        }
+
+        return ResponseResult.success(board);
+
+    }
 }
