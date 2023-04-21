@@ -1,12 +1,15 @@
 package com.example.jpablog.user.service;
 
 import com.example.jpablog.board.model.ServiceResult;
+import com.example.jpablog.common.exception.BizException;
+import com.example.jpablog.logs.service.LogsService;
 import com.example.jpablog.user.entity.Member;
 import com.example.jpablog.user.entity.MemberInterest;
 import com.example.jpablog.user.model.*;
 import com.example.jpablog.user.repository.MemberCustomRepository;
 import com.example.jpablog.user.repository.MemberInterestRepository;
 import com.example.jpablog.user.repository.MemberRepository;
+import com.example.jpablog.util.PasswordUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +24,8 @@ public class MemberServiceImpl implements MemberService{
     private final MemberRepository memberRepository;
     private final MemberCustomRepository memberCustomRepository;
     private final MemberInterestRepository memberInterestRepository;
+
+    private final LogsService logsService;
 
     @Override
     public MemberSumary getMemberStatusCount() {
@@ -118,5 +123,21 @@ public class MemberServiceImpl implements MemberService{
 
         memberInterestRepository.delete(memberInterest);
         return ServiceResult.success();
+    }
+
+    @Override
+    public Member login(MemberLogin memberLogin) {
+        Optional<Member> optionalMember = memberRepository.findByEmail(memberLogin.getEmail());
+        if(!optionalMember.isPresent()){
+            throw new BizException("회원 정보가 존재하지 않습니다.");
+        }
+        Member member = optionalMember.get();
+
+        if(!PasswordUtils.equalPassword(memberLogin.getPassword(), member.getPassword())){
+            throw new BizException("일치하는 정보가 없습니다.");
+        }
+
+        return member;
+
     }
 }

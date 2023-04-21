@@ -181,3 +181,10 @@ create table MEMBER_POINT
     MEMBER_ID             BIGINT,
     constraint          FK_MEMBER_POINT_MEMBER_ID foreign key (MEMBER_ID) references MEMBER (ID)
 );
+
+create table LOGS
+(
+    ID                  BIGINT auto_increment primary key,
+    TEXT                CLOB,
+    REG_DATE            TIMESTAMP
+);
