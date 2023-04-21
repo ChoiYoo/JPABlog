@@ -148,3 +148,16 @@ create table BOARD_BOOKMARK
 
     constraint FK_BOARD_BOOKMARK_MEMBER_ID foreign key (MEMBER_ID) references MEMBER (ID)
 );
+
+create table MEMBER_INTEREST
+(
+    ID                  BIGINT auto_increment primary key,
+
+    MEMBER_ID             BIGINT,
+    INTEREST_MEMBER_ID    BIGINT,
+
+    REG_DATE            TIMESTAMP,
+
+    constraint FK_MEMBER_INTEREST_MEMBER_ID foreign key (MEMBER_ID) references MEMBER (ID),
+    constraint FK_MEMBER_INTEREST_INTEREST_MEMBER_ID foreign key (INTEREST_MEMBER_ID) references MEMBER (ID)
+);
