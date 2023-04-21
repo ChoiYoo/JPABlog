@@ -3,6 +3,11 @@ package com.example.jpablog.user.controller;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
+import com.example.jpablog.board.entity.Board;
+import com.example.jpablog.board.entity.BoardComment;
+import com.example.jpablog.board.model.ServiceResult;
+import com.example.jpablog.board.service.BoardService;
+import com.example.jpablog.common.model.ResponseResult;
 import com.example.jpablog.notice.entity.Notice;
 import com.example.jpablog.notice.entity.NoticeLike;
 import com.example.jpablog.notice.model.NoticeResponse;
@@ -15,6 +20,7 @@ import com.example.jpablog.user.exception.MemberNotFoundException;
 import com.example.jpablog.user.exception.PasswordNotMatchException;
 import com.example.jpablog.user.model.*;
 import com.example.jpablog.user.repository.MemberRepository;
+import com.example.jpablog.user.service.PointService;
 import com.example.jpablog.util.JWTUtils;
 import com.example.jpablog.util.PasswordUtils;
 import jakarta.servlet.http.HttpServletRequest;
@@ -41,6 +47,8 @@ public class ApiMemberController {
     private final MemberRepository memberRepository;
     private final NoticeRepository noticeRepository;
     private final NoticeLikeRepository noticeLikeRepository;
+    private final BoardService boardService;
+    private final PointService pointService;
 
 
 //    @PostMapping("/api/user")
@@ -415,6 +423,61 @@ public class ApiMemberController {
 
         return ResponseEntity.ok().build();
     }
+
+    /**
+     * 80. 내가 작성한 게시글 목록을 리턴하는 API를 작성해 보세요.
+     */
+    @GetMapping("/api/user/board/post")
+    public ResponseEntity<?> myPost(@RequestHeader("JWT-TOKEN") String token){
+
+        String email = "";
+        try {
+            email = JWTUtils.getIssuer(token);
+        } catch (SignatureVerificationException e) {
+            return ResponseResult.fail("토큰 정보가 일치하지 않습니다.");
+        }
+
+        List<Board> list = boardService.postList(email);
+        return ResponseResult.success(list);
+    }
+
+    /**
+     * 81. 내가 작성한 게시글의 코멘트 목록을 리턴하는 API를 작성해 보세요.
+     */
+    @GetMapping("/api/user/board/comment")
+    public ResponseEntity<?> myComment(@RequestHeader("JWT-TOKEN") String token){
+
+        String email = "";
+        try {
+            email = JWTUtils.getIssuer(token);
+        } catch (SignatureVerificationException e) {
+            return ResponseResult.fail("토큰 정보가 일치하지 않습니다.");
+        }
+
+        List<BoardComment> list = boardService.commentList(email);
+        return ResponseResult.success(list);
+    }
+
+    /**
+     * 82. 사용자의 포인트 정보를 만들고 게시글을 작성할 경우, 포인트를 누적하는 API를 작성해 보세요.
+     */
+    @PostMapping("/api/user/point")
+    public ResponseEntity<?> memberPoint(@RequestHeader("JWT-TOKEN") String token,
+                            @RequestBody MemberPointInput memberPointInput){
+
+        String email = "";
+        try {
+            email = JWTUtils.getIssuer(token);
+        } catch (SignatureVerificationException e) {
+            return ResponseResult.fail("토큰 정보가 일치하지 않습니다.");
+        }
+
+        ServiceResult result = pointService.addPoint(email, memberPointInput);
+        return ResponseResult.result(result);
+
+    }
+
+
 
 
 }

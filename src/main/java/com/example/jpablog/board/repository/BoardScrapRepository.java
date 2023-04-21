@@ -1,17 +1,13 @@
 package com.example.jpablog.board.repository;
 
 import com.example.jpablog.board.entity.Board;
-import com.example.jpablog.board.entity.BoardType;
+import com.example.jpablog.board.entity.BoardBadReport;
+import com.example.jpablog.board.entity.BoardScrap;
 import com.example.jpablog.user.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
-public interface BoardRepository extends JpaRepository<Board, Long> {
+public interface BoardScrapRepository extends JpaRepository<BoardScrap, Long>{
 
-    long countByBoardType(BoardType boardType);
-
-    List<Board> findByMember(Member member);
 }

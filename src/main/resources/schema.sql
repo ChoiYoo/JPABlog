@@ -119,3 +119,65 @@ create table BOARD_BAD_REPORT
     MEMBER_ID      BIGINT,
     USER_NAME      VARCHAR(255)
 );
+
+create table BOARD_SCRAP
+(
+    ID             BIGINT auto_increment primary key,
+    BOARD_CONTENTS VARCHAR(255),
+    BOARD_ID       BIGINT,
+    BOARD_REG_DATE TIMESTAMP,
+    BOARD_TITLE    VARCHAR(255),
+    BOARD_TYPE_ID  BIGINT,
+    BOARD_MEMBER_ID  BIGINT,
+    REG_DATE       TIMESTAMP,
+    MEMBER_ID        BIGINT,
+    constraint FK_BOARD_SCRAP_MEMBER_ID foreign key (MEMBER_ID) references MEMBER (ID)
+);
+
+create table BOARD_BOOKMARK
+(
+    ID             BIGINT auto_increment primary key,
+    MEMBER_ID        BIGINT,
+
+    BOARD_ID       BIGINT,
+    BOARD_TYPE_ID  BIGINT,
+    BOARD_TITLE    VARCHAR(255),
+    BOARD_URL      VARCHAR(255),
+
+    REG_DATE       TIMESTAMP,
+
+    constraint FK_BOARD_BOOKMARK_MEMBER_ID foreign key (MEMBER_ID) references MEMBER (ID)
+);
+
+create table MEMBER_INTEREST
+(
+    ID                  BIGINT auto_increment primary key,
+
+    MEMBER_ID             BIGINT,
+    INTEREST_MEMBER_ID    BIGINT,
+
+    REG_DATE            TIMESTAMP,
+
+    constraint FK_MEMBER_INTEREST_MEMBER_ID foreign key (MEMBER_ID) references MEMBER (ID),
+    constraint FK_MEMBER_INTEREST_INTEREST_MEMBER_ID foreign key (INTEREST_MEMBER_ID) references MEMBER (ID)
+);
+
+create table BOARD_COMMENT
+(
+    ID                  BIGINT auto_increment primary key,
+    COMMENTS            VARCHAR(255),
+    REG_DATE            TIMESTAMP,
+    BOARD_ID            BIGINT,
+    MEMBER_ID           BIGINT,
+    constraint          FK_BOARD_COMMENT_MEMBER_ID foreign key (MEMBER_ID) references MEMBER (ID),
+    constraint          FK_BOARD_COMMENT_BOARD_ID foreign key (BOARD_ID) references BOARD (ID)
+);
+
+create table MEMBER_POINT
+(
+    ID                  BIGINT auto_increment primary key,
+    POINT               INTEGER,
+    MEMBER_POINT_TYPE     VARCHAR(255),
+    MEMBER_ID             BIGINT,
+    constraint          FK_MEMBER_POINT_MEMBER_ID foreign key (MEMBER_ID) references MEMBER (ID)
+);

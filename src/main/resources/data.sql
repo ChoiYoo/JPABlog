@@ -1,6 +1,6 @@
 INSERT INTO MEMBER (ID, EMAIL, PASSWORD, PHONE, REG_DATE, UPDATE_DATE, USER_NAME, STATUS, LOCK_YN)
 VALUES (1, 'test@naver.com', '$2a$10$aVjtWrojTOJJStC5EFH6Z.nG/U4c0PXJke3pmYWElmS/M77dG3Ud2', '010-1111-2222', '2021-02-01 00:49:43.000000', null, '박규태', 1, 0)
-     , (2, 'test1@gmail.com', '2222', '010-3333-4444', '2021-02-19 00:50:11.000000', null, '정혜경', 1, 0)
+     , (2, 'test1@gmail.com', '$2a$10$8bcV6o.TrTPAPzO7N7Q7YOaC3wFql99nw0Doy/F.AtNvc5ehTRCqu', '010-3333-4444', '2021-02-19 00:50:11.000000', null, '정혜경', 1, 0)
      , (3, 'test2@gmail.com', '3333', '010-5555-6666', '2021-02-19 23:27:07.000000', null, '박하은', 1, 0)
      , (4, 'test3@gmail.com', '4444', '010-7777-9999', '2021-02-02 00:27:51.000000', null, '박하영', 2, 0);
 
@@ -33,3 +33,11 @@ VALUES (1, '게시판1', '2021-02-01 01:12:37.000000', 1)
 INSERT INTO BOARD (ID, BOARD_TYPE_ID, MEMBER_ID, TITLE, CONTENTS, REG_DATE, TOP_YN)
 VALUES (1, 1, 1, '게시글1', '게시글내용1', '2021-02-01 01:12:37.000000', 0)
      , (2, 1, 1, '게시글2', '게시글내용2', '2021-02-01 01:12:37.000000', 0);
+
+INSERT INTO BOARD_COMMENT(ID, COMMENTS, REG_DATE, BOARD_ID, MEMBER_ID)
+VALUES
+(1, '게시글1번에 대한 댓글1', '2021-02-01 01:12:37.000000', 1, 1)
+     , (2, '게시글1번에 대한 댓글2', '2021-02-01 01:12:37.000000', 1, 1)
+     , (3, '게시글2번에 대한 댓글1', '2021-02-01 01:12:37.000000', 2, 1)
+     , (4, '게시글1번에 대한 댓글3', '2021-02-01 01:12:37.000000', 1, 2)
+;

@@ -1,14 +1,13 @@
 package com.example.jpablog.board.service;
 
-import ch.qos.logback.core.util.OptionHelper;
 import com.example.jpablog.board.entity.*;
 import com.example.jpablog.board.model.*;
 import com.example.jpablog.board.repository.*;
+import com.example.jpablog.common.exception.BizException;
 import com.example.jpablog.user.entity.Member;
 import com.example.jpablog.user.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.DeleteMapping;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,6 +24,9 @@ public class BoardServiceImpl implements BoardService {
     private final MemberRepository memberRepository;
     private final BoardLikesRepository boardLikesRepository;
     private final BoardBadReportRepository boardBadReportRepository;
+    private final BoardScrapRepository boardScrapRepository;
+    private final BoardBookmarkRepository boardBookmarkRepository;
+    private final BoardCommentRepository boardCommentRepository;
     @Override
     public ServiceResult addBoard(BoardTypeInput boardTypeInput) {
 
@@ -265,6 +267,145 @@ public class BoardServiceImpl implements BoardService {
 
         return ServiceResult.success();
 
+
+    }
+
+    @Override
+    public List<BoardBadReport> badReportList() {
+
+        return boardBadReportRepository.findAll();
+    }
+
+    @Override
+    public ServiceResult scrapBoard(Long id, String email) {
+        Optional<Board> optionalBoard = boardRepository.findById(id);
+        if(!optionalBoard.isPresent()){
+            return ServiceResult.fail("게시글이 존재하지 않습니다.");
+        }
+        Board board = optionalBoard.get();
+
+        Optional<Member> optionalMember = memberRepository.findByEmail(email);
+        if(!optionalMember.isPresent()){
+            return ServiceResult.fail("회원 정보가 존재하지 않습니다.");
+        }
+        Member member = optionalMember.get();
+
+
+        BoardScrap boardScrap = BoardScrap.builder()
+                .member(member)
+                .boardId(board.getId())
+                .boardTypeId(board.getBoardType().getId())
+                .boardTitle(board.getTitle())
+                .boardContents(board.getContents())
+                .boardMemberId(board.getMember().getId())
+                .boardRegDate(board.getRegDate())
+                .regDate(LocalDateTime.now())
+                .build();
+
+        boardScrapRepository.save(boardScrap);
+
+        return ServiceResult.success();
+
+    }
+
+    @Override
+    public ServiceResult removeScrap(Long id, String email) {
+
+        Optional<BoardScrap> optionalBoardScrap = boardScrapRepository.findById(id);
+        if(!optionalBoardScrap.isPresent()){
+            return ServiceResult.fail("삭제할 스크랩이 없습니다.");
+        }
+        BoardScrap boardScrap = optionalBoardScrap.get();
+
+        Optional<Member> optionalMember = memberRepository.findByEmail(email);
+        if(!optionalMember.isPresent()){
+            return ServiceResult.fail("회원 정보가 존재하지 않습니다.");
+        }
+        Member member = optionalMember.get();
+
+        if(member.getId() != boardScrap.getMember().getId()){
+            return ServiceResult.fail("본인의 스크랩만 삭제할 수 있습니다.");
+        }
+
+        boardScrapRepository.delete(boardScrap);
+        return ServiceResult.success();
+    }
+
+    private String getBoardUrl(long boardId){
+        return String.format("/board/%d", boardId);
+    }
+
+    @Override
+    public ServiceResult bookmarkBoard(Long id, String email) {
+        Optional<Board> optionalBoard = boardRepository.findById(id);
+        if(!optionalBoard.isPresent()){
+            return ServiceResult.fail("게시글이 존재하지 않습니다.");
+        }
+        Board board = optionalBoard.get();
+
+        Optional<Member> optionalMember = memberRepository.findByEmail(email);
+        if(!optionalMember.isPresent()){
+            return ServiceResult.fail("회원 정보가 존재하지 않습니다.");
+        }
+        Member member = optionalMember.get();
+
+        BoardBookmark boardBookmark = BoardBookmark.builder()
+                .member(member)
+                .boardId(board.getId())
+                .boardTitle(board.getTitle())
+                .boardTypeId(board.getBoardType().getId())
+                .boardUrl(getBoardUrl(board.getId()))
+                .regDate(LocalDateTime.now())
+                .build();
+
+        boardBookmarkRepository.save(boardBookmark);
+        return ServiceResult.success();
+    }
+
+    @Override
+    public ServiceResult removeBookmark(Long id, String email) {
+        Optional<BoardBookmark> optionalBoardBookmark = boardBookmarkRepository.findById(id);
+        if(!optionalBoardBookmark.isPresent()){
+            return ServiceResult.fail("삭제할 북마크가 없습니다.");
+        }
+        BoardBookmark boardBookmark = optionalBoardBookmark.get();
+
+        Optional<Member> optionalMember = memberRepository.findByEmail(email);
+        if(!optionalMember.isPresent()){
+            return ServiceResult.fail("회원 정보가 존재하지 않습니다.");
+        }
+        Member member = optionalMember.get();
+
+        if(member.getId() != boardBookmark.getMember().getId()){
+            return ServiceResult.fail("본인의 북마크만 삭제할 수 있습니다.");
+        }
+
+        boardBookmarkRepository.delete(boardBookmark);
+        return ServiceResult.success();
+    }
+
+    @Override
+    public List<Board> postList(String email) {
+        Optional<Member> optionalMember = memberRepository.findByEmail(email);
+        if(!optionalMember.isPresent()){
+            throw new BizException("회원 정보가 존재하지 않습니다.");
+        }
+        Member member = optionalMember.get();
+
+        List<Board> list = boardRepository.findByMember(member);
+        return list;
+    }
+
+    @Override
+    public List<BoardComment> commentList(String email) {
+        Optional<Member> optionalMember = memberRepository.findByEmail(email);
+        if(!optionalMember.isPresent()){
+            throw new BizException("회원 정보가 존재하지 않습니다.");
+        }
+        Member member = optionalMember.get();
+
+        List<BoardComment> list = boardCommentRepository.findByMember(member);
+        return list;
 
     }
 }

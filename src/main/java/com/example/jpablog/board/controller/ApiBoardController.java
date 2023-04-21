@@ -234,4 +234,7 @@ public class ApiBoardController {
         return ResponseResult.result(result);
 
     }
+    /**
+     *
+     */
 }
