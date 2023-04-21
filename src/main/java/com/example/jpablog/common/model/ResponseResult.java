@@ -6,6 +6,7 @@ import com.example.jpablog.user.model.ResponseMessage;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
+import java.util.Objects;
 
 public class ResponseResult {
 
@@ -18,7 +19,7 @@ public class ResponseResult {
         return success(null);
     }
 
-    public static ResponseEntity<?> success(List<BoardBadReport> data) {
+    public static ResponseEntity<?> success(Object data) {
 
         return ResponseEntity.ok().body(ResponseMessage.success(data));
     }

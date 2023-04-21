@@ -3,6 +3,9 @@ package com.example.jpablog.user.controller;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
+import com.example.jpablog.board.entity.Board;
+import com.example.jpablog.board.service.BoardService;
+import com.example.jpablog.common.model.ResponseResult;
 import com.example.jpablog.notice.entity.Notice;
 import com.example.jpablog.notice.entity.NoticeLike;
 import com.example.jpablog.notice.model.NoticeResponse;
@@ -41,6 +44,7 @@ public class ApiMemberController {
     private final MemberRepository memberRepository;
     private final NoticeRepository noticeRepository;
     private final NoticeLikeRepository noticeLikeRepository;
+    private final BoardService boardService;
 
 
 //    @PostMapping("/api/user")
@@ -414,6 +418,23 @@ public class ApiMemberController {
         // 블랙리스트 작성
 
         return ResponseEntity.ok().build();
+    }
+
+    /**
+     * 80. 내가 작성한 게시글 목록을 리턴하는 API를 작성해 보세요.
+     */
+    @GetMapping("/api/user/board/post")
+    public ResponseEntity<?> myPost(@RequestHeader("JWT-TOKEN") String token){
+
+        String email = "";
+        try {
+            email = JWTUtils.getIssuer(token);
+        } catch (SignatureVerificationException e) {
+            return ResponseResult.fail("토큰 정보가 일치하지 않습니다.");
+        }
+
+        List<Board> list = boardService.postList(email);
+        return ResponseResult.success(list);
     }
 
 

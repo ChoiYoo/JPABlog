@@ -1,5 +1,6 @@
 package com.example.jpablog.board.service;
 
+import com.example.jpablog.board.entity.Board;
 import com.example.jpablog.board.entity.BoardBadReport;
 import com.example.jpablog.board.entity.BoardType;
 import com.example.jpablog.board.model.*;
@@ -41,4 +42,6 @@ public interface BoardService {
     ServiceResult bookmarkBoard(Long id, String email);
 
     ServiceResult removeBookmark(Long id, String email);
+
+    List<Board> postList(String email);
 }
