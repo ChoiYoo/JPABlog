@@ -15,4 +15,5 @@ import java.util.Optional;
 public interface MemberInterestRepository extends JpaRepository<MemberInterest, Long> {
 
     long countByMemberAndInterestMember(Member member, Member InterestMember);
+
 }

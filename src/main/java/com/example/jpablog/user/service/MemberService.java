@@ -21,4 +21,7 @@ public interface MemberService {
     List<MemberLogCount> getMemberLikeBest();
 
     ServiceResult addInterestMember(String email, Long id);
+
+    ServiceResult removeInterestMember(String email, Long id);
+
 }

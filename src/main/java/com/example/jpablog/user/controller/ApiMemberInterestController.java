@@ -7,10 +7,7 @@ import com.example.jpablog.user.service.MemberService;
 import com.example.jpablog.util.JWTUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
@@ -33,6 +30,24 @@ public class ApiMemberInterestController {
         }
 
         ServiceResult result = memberService.addInterestMember(email, id);
+        return ResponseResult.result(result);
+    }
+
+    /**
+     * 79. 관심사용자에서 관심사용자를 삭제하는 API를 작성해 보세요.
+     */
+    @DeleteMapping("/api/user/interest/{id}")
+    public ResponseEntity<?> deleteInterestMember(@PathVariable Long id,
+                                            @RequestHeader("JWT-TOKEN") String token){
+
+        String email = "";
+        try {
+            email = JWTUtils.getIssuer(token);
+        }catch (JWTVerificationException e) {
+            return ResponseResult.fail("토큰 정보가 올바르지 않습니다.");
+        }
+
+        ServiceResult result = memberService.removeInterestMember(email, id);
         return ResponseResult.result(result);
     }
 

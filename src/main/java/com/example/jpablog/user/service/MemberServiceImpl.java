@@ -97,4 +97,26 @@ public class MemberServiceImpl implements MemberService{
         memberInterestRepository.save(memberInterest);
         return ServiceResult.success();
     }
+
+    @Override
+    public ServiceResult removeInterestMember(String email, Long id) {
+        Optional<Member> optionalMember = memberRepository.findByEmail(email);
+        if(!optionalMember.isPresent()){
+            return ServiceResult.fail("회원 정보가 존재하지 않습니다.");
+        }
+        Member member = optionalMember.get();
+
+        Optional<MemberInterest> optionalMemberInterest = memberInterestRepository.findById(id);
+        if(!optionalMemberInterest.isPresent()){
+            return ServiceResult.fail("삭제할 정보가 없습니다.");
+        }
+
+        MemberInterest memberInterest = optionalMemberInterest.get();
+        if(memberInterest.getMember().getId() != member.getId()){
+            return ServiceResult.fail("본인의 관심자 정보만 삭제할 수 있습니다.");
+        }
+
+        memberInterestRepository.delete(memberInterest);
+        return ServiceResult.success();
+    }
 }
