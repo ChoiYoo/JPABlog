@@ -28,6 +28,7 @@ import com.example.jpablog.util.PasswordUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,6 +43,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 public class ApiLoginController {
@@ -51,8 +53,34 @@ public class ApiLoginController {
     /**
      * 83. 회원 로그인 히스토리 기능을 구현하는 API를 작성해 보세요.
      */
+//    @PostMapping("/api/login")
+//    public ResponseEntity<?> login(@RequestBody @Valid MemberLogin memberLogin, Errors errors){
+//
+//        if(errors.hasErrors()){
+//            return ResponseResult.fail("입력 값이 정확하지 않습니다.", ResponseError.of(errors.getAllErrors()));
+//        }
+//        Member member = null;
+//        try {
+//            member = memberService.login(memberLogin);
+//        } catch (BizException e) {
+//            return ResponseResult.fail(e.getMessage());
+//        }
+//        MemberLoginToken memberLoginToken = JWTUtils.createToken(member);
+//
+//        if (memberLoginToken == null){
+//            return ResponseResult.fail("JWT 생성에 실패하였습니다.");
+//        }
+//
+//        return ResponseResult.success(memberLoginToken);
+//    }
+
+    /**
+     * 84. 로그인시 에러가 발생하는 경우 로그에 기록하는 기능을 작성해 보세요.
+     */
     @PostMapping("/api/login")
     public ResponseEntity<?> login(@RequestBody @Valid MemberLogin memberLogin, Errors errors){
+
+        log.info("로그인 함수 !!!!!");
 
         if(errors.hasErrors()){
             return ResponseResult.fail("입력 값이 정확하지 않습니다.", ResponseError.of(errors.getAllErrors()));
@@ -61,11 +89,13 @@ public class ApiLoginController {
         try {
             member = memberService.login(memberLogin);
         } catch (BizException e) {
+            log.info("로그인 에러:" +e.getMessage());
             return ResponseResult.fail(e.getMessage());
         }
         MemberLoginToken memberLoginToken = JWTUtils.createToken(member);
 
         if (memberLoginToken == null){
+            log.info("JWT 생성 에러");
             return ResponseResult.fail("JWT 생성에 실패하였습니다.");
         }
 
