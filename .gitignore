@@ -8,7 +8,7 @@ logs/
 logs
 /logs
 *.log
-*.json
+src/main/java/com/example/jpablog/a.json
 
 ### STS ###
 .apt_generated
