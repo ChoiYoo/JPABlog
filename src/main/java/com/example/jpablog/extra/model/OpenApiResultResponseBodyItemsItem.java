@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class OpenApiResultResponseBodyItemsItem {
     private String dutyAddr;
+    private String dutyEtc;
     private String dutyMapimg;
     private String dutyName;
     private String dutyTel1;
@@ -37,4 +38,3 @@ public class OpenApiResultResponseBodyItemsItem {
     private double wgs84Lat;
     private double wgs84Lon;
 }
-
