@@ -419,4 +419,10 @@ public class BoardServiceImpl implements BoardService {
 
 
     }
+
+    @Override
+    public List<Board> list() {
+        List<Board> boardList = boardRepository.findAll();
+        return boardList;
+    }
 }

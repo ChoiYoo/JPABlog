@@ -251,6 +251,15 @@ public class ApiBoardController {
         }
 
         return ResponseResult.success(board);
+    }
 
+    /**
+     * 92. 인터셉터을 이용하여 API요청에 대한 정보를 log에 기록하는 기능을 작성해 보세요.
+     * - 글목록 API호출(/api/board)
+     */
+    @GetMapping("/api/board")
+    public ResponseEntity<?> list(){
+        List<Board> list = boardService.list();
+        return ResponseResult.success(list);
     }
 }
