@@ -425,4 +425,29 @@ public class BoardServiceImpl implements BoardService {
         List<Board> boardList = boardRepository.findAll();
         return boardList;
     }
+
+    @Override
+    public ServiceResult add(String email, BoardInput boardInput) {
+        Optional<Member> optionalMember = memberRepository.findByEmail(email);
+        if(!optionalMember.isPresent()){
+            throw new BizException("회원 정보가 존재하지 않습니다.");
+        }
+        Member member = optionalMember.get();
+
+        Optional<BoardType> optionalBoardType = boardTypeRepository.findById(boardInput.getBoardType());
+        if(!optionalBoardType.isPresent()){
+            return ServiceResult.fail("해당 타입이 없습니다.");
+        }
+
+        Board board = Board.builder()
+                .member(member)
+                .title(boardInput.getTitle())
+                .contents(boardInput.getContents())
+                .boardType(optionalBoardType.get())
+                .regDate(LocalDateTime.now())
+                .build();
+        boardRepository.save(board);
+        return ServiceResult.success();
+
+    }
 }
