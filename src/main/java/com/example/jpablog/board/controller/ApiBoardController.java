@@ -251,6 +251,30 @@ public class ApiBoardController {
         }
 
         return ResponseResult.success(board);
+    }
+
+    /**
+     * 92. 인터셉터을 이용하여 API요청에 대한 정보를 log에 기록하는 기능을 작성해 보세요.
+     * - 글목록 API호출(/api/board)
+     */
+    @GetMapping("/api/board")
+    public ResponseEntity<?> list(){
+        List<Board> list = boardService.list();
+        return ResponseResult.success(list);
+    }
+
+    /**
+     * 93. 인터셉터을 활용하여 JWT 인증이 필요한 API에 대해서(글쓰기) 토큰 유효성을 검증하는 API를 작성해 보세요.
+     * - 게시글쓰기 기능구현(/api/board)- 글쓰기 API호출시 토큰 유효성 검사
+     */
+    @PostMapping("/api/board")
+    public ResponseEntity<?> add(@RequestHeader("JWT-TOKEN") String token
+            , @RequestBody BoardInput boardInput){
+
+        String email = JWTUtils.getIssuer(token);
+        ServiceResult result = boardService.add(email, boardInput);
+
+        return ResponseResult.result(result);
 
     }
 }
