@@ -20,6 +20,7 @@ import com.example.jpablog.user.exception.MemberNotFoundException;
 import com.example.jpablog.user.exception.PasswordNotMatchException;
 import com.example.jpablog.user.model.*;
 import com.example.jpablog.user.repository.MemberRepository;
+import com.example.jpablog.user.service.MemberService;
 import com.example.jpablog.user.service.PointService;
 import com.example.jpablog.util.JWTUtils;
 import com.example.jpablog.util.PasswordUtils;
@@ -49,6 +50,7 @@ public class ApiMemberController {
     private final NoticeLikeRepository noticeLikeRepository;
     private final BoardService boardService;
     private final PointService pointService;
+    private final MemberService memberService;
 
 
 //    @PostMapping("/api/user")
@@ -230,7 +232,7 @@ public class ApiMemberController {
 
         Member member = Member.builder()
                 .email(memberInput.getEmail())
-                .userName(memberInput.getUsername())
+                .userName(memberInput.getUserName())
                 .phone(memberInput.getPhone())
                 .password(encryptPassword)
                 .regDate(LocalDateTime.now())
@@ -473,6 +475,17 @@ public class ApiMemberController {
         }
 
         ServiceResult result = pointService.addPoint(email, memberPointInput);
+        return ResponseResult.result(result);
+    }
+
+    /**
+     * 95. 회원가입시 가입된 회원에게 가입메일을 전송하는 API를 작성해 보세요.
+     */
+    @PostMapping("/api/public/user")
+    public ResponseEntity<?> add(@RequestBody MemberInput memberInput){
+
+        ServiceResult result = memberService.add(memberInput);
+
         return ResponseResult.result(result);
 
     }

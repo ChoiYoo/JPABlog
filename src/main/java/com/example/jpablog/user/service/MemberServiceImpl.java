@@ -1,6 +1,7 @@
 package com.example.jpablog.user.service;
 
 import com.example.jpablog.board.model.ServiceResult;
+import com.example.jpablog.common.MailComponent;
 import com.example.jpablog.common.exception.BizException;
 import com.example.jpablog.logs.service.LogsService;
 import com.example.jpablog.user.entity.Member;
@@ -11,6 +12,7 @@ import com.example.jpablog.user.repository.MemberInterestRepository;
 import com.example.jpablog.user.repository.MemberRepository;
 import com.example.jpablog.util.PasswordUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -26,6 +28,7 @@ public class MemberServiceImpl implements MemberService{
     private final MemberInterestRepository memberInterestRepository;
 
     private final LogsService logsService;
+    private final MailComponent mailComponent;
 
     @Override
     public MemberSumary getMemberStatusCount() {
@@ -139,5 +142,39 @@ public class MemberServiceImpl implements MemberService{
 
         return member;
 
+    }
+
+    @Override
+    public ServiceResult add(MemberInput memberInput) {
+        Optional<Member> optionalMember = memberRepository.findByEmail(memberInput.getEmail());
+        if(optionalMember.isPresent()){
+            throw new BizException("이미 가입된 이메일입니다.");
+        }
+
+        String encryptPassword = PasswordUtils.encryptedPassword(memberInput.getPassword());
+
+        Member member = Member.builder()
+                .userName(memberInput.getUserName())
+                .email(memberInput.getEmail())
+                .phone(memberInput.getPhone())
+                .password(encryptPassword)
+                .regDate(LocalDateTime.now())
+                .status(MemberStatus.Using)
+                .build();
+
+        memberRepository.save(member);
+
+        //메일전송
+        String fromEmail = "";
+        String fromName = "관리자";
+        String toEmail = member.getEmail();
+        String toName = member.getUserName();
+
+        String title = "회원가입을 축하드립니다!";
+        String contents = "환영합니다.";
+
+        mailComponent.send(fromEmail, fromName, toEmail, toName, title, contents);
+
+        return ServiceResult.success();
     }
 }
