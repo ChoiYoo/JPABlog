@@ -29,6 +29,8 @@ spring:
 
   mustache:
     suffix: .html
+  profiles:
+    include: API-KEY
 
 logging:
   level:
@@ -36,6 +38,9 @@ logging:
     org.hibernate.type: trace
   file:
     name: ./logs/spring-jpa.log
+
+
+
 
 
 
