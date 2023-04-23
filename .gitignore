@@ -45,4 +45,3 @@ application.yml
 application-API-KEY.properties
 *.yml
 *.properties
-src/main/resources
