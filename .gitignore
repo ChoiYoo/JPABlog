@@ -8,6 +8,7 @@ logs/
 logs
 /logs
 *.log
+*.json
 
 ### STS ###
 .apt_generated
@@ -39,3 +40,8 @@ out/
 
 ### VS Code ###
 .vscode/
+
+application.yml
+application-API-KEY.properties
+*.yml
+*.properties
