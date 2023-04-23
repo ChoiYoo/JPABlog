@@ -25,4 +25,6 @@ public interface MemberService {
     Member login(MemberLogin memberLogin);
 
     ServiceResult add(MemberInput memberInput);
+
+    ServiceResult resetPassword(MemberPasswordResetInput memberPasswordResetInput);
 }

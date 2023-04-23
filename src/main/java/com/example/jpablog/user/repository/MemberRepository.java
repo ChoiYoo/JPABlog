@@ -30,4 +30,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     @Query("select m from Member m where m.regDate between :startDate and :endDate ")
     List<Member> findToday(LocalDateTime startDate, LocalDateTime endDate);
+
+    Optional<Member> findByEmailAndUserName(String email, String userName);
 }
