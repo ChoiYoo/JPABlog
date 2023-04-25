@@ -1,8 +1,11 @@
 package com.example.jpablog.user.service;
 
 import com.example.jpablog.board.model.ServiceResult;
+import com.example.jpablog.common.MailComponent;
 import com.example.jpablog.common.exception.BizException;
 import com.example.jpablog.logs.service.LogsService;
+import com.example.jpablog.mail.entity.MailTemplate;
+import com.example.jpablog.mail.repository.MailTemplateRepository;
 import com.example.jpablog.user.entity.Member;
 import com.example.jpablog.user.entity.MemberInterest;
 import com.example.jpablog.user.model.*;
@@ -11,11 +14,13 @@ import com.example.jpablog.user.repository.MemberInterestRepository;
 import com.example.jpablog.user.repository.MemberRepository;
 import com.example.jpablog.util.PasswordUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +31,10 @@ public class MemberServiceImpl implements MemberService{
     private final MemberInterestRepository memberInterestRepository;
 
     private final LogsService logsService;
+    private final MailComponent mailComponent;
+    private final MailTemplateRepository mailTemplateRepository;
+
+    private final String fromEmailAddress = "";
 
     @Override
     public MemberSumary getMemberStatusCount() {
@@ -139,5 +148,75 @@ public class MemberServiceImpl implements MemberService{
 
         return member;
 
+    }
+
+    @Override
+    public ServiceResult add(MemberInput memberInput) {
+        Optional<Member> optionalMember = memberRepository.findByEmail(memberInput.getEmail());
+        if(optionalMember.isPresent()){
+            throw new BizException("이미 가입된 이메일입니다.");
+        }
+
+        String encryptPassword = PasswordUtils.encryptedPassword(memberInput.getPassword());
+
+        Member member = Member.builder()
+                .userName(memberInput.getUserName())
+                .email(memberInput.getEmail())
+                .phone(memberInput.getPhone())
+                .password(encryptPassword)
+                .regDate(LocalDateTime.now())
+                .status(MemberStatus.Using)
+                .build();
+
+        memberRepository.save(member);
+
+        //메일전송
+        String fromEmail = fromEmailAddress;
+        String fromName = "관리자";
+        String toEmail = member.getEmail();
+        String toName = member.getUserName();
+
+        String title = "회원가입을 축하드립니다!";
+        String contents = "환영합니다.";
+
+        mailComponent.send(fromEmail, fromName, toEmail, toName, title, contents);
+
+        return ServiceResult.success();
+    }
+
+    @Override
+    public ServiceResult resetPassword(MemberPasswordResetInput memberInput) {
+        Optional<Member> optionalMember = memberRepository.findByEmailAndUserName(memberInput.getEmail()
+                , memberInput.getUserName());
+        if(!optionalMember.isPresent()){
+            throw new BizException("회원 정보가 존재하지 않습니다.");
+        }
+        Member member = optionalMember.get();
+
+        String passwordResetKey = UUID.randomUUID().toString();
+
+        member.setPasswordResetYn(true);
+        member.setPasswordResetKey(passwordResetKey);
+        memberRepository.save(member);
+
+        String serverUrl = "http://localhost:8080";
+
+
+        Optional<MailTemplate> optionalMailTemplate = mailTemplateRepository.findByTemplateId("USER_RESET_PASSWORD");
+        optionalMailTemplate.ifPresent(e -> {
+
+            String fromEmail = e.getSendEmail();
+            String fromUserName = e.getSendUserName();
+            String title = e.getTitle().replaceAll("\\{USER_NAME\\}", member.getUserName());
+            String contents = e.getContents().replaceAll("\\{USER_NAME\\}", member.getUserName())
+                    .replaceAll("\\{SERVER_URL\\}", serverUrl)
+                    .replaceAll("\\{RESET_PASSWORD_KEY\\}", passwordResetKey);
+
+            mailComponent.send(fromEmail, fromUserName
+                    , member.getEmail(), member.getUserName(), title, contents);
+
+        });
+
+        return ServiceResult.success();
     }
 }

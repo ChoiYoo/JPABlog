@@ -2,10 +2,7 @@ package com.example.jpablog.user.service;
 
 import com.example.jpablog.board.model.ServiceResult;
 import com.example.jpablog.user.entity.Member;
-import com.example.jpablog.user.model.MemberLogCount;
-import com.example.jpablog.user.model.MemberLogin;
-import com.example.jpablog.user.model.MemberNoticeCount;
-import com.example.jpablog.user.model.MemberSumary;
+import com.example.jpablog.user.model.*;
 
 import java.util.List;
 
@@ -26,4 +23,8 @@ public interface MemberService {
     ServiceResult removeInterestMember(String email, Long id);
 
     Member login(MemberLogin memberLogin);
+
+    ServiceResult add(MemberInput memberInput);
+
+    ServiceResult resetPassword(MemberPasswordResetInput memberPasswordResetInput);
 }

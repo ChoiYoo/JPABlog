@@ -44,4 +44,10 @@ public class Member {
     @Column
     private boolean lockYn;
 
+    @Column
+    private boolean passwordResetYn;
+
+    @Column
+    private String passwordResetKey;
+
 }

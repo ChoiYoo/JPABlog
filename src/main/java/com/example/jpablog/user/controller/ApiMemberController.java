@@ -7,6 +7,7 @@ import com.example.jpablog.board.entity.Board;
 import com.example.jpablog.board.entity.BoardComment;
 import com.example.jpablog.board.model.ServiceResult;
 import com.example.jpablog.board.service.BoardService;
+import com.example.jpablog.common.exception.BizException;
 import com.example.jpablog.common.model.ResponseResult;
 import com.example.jpablog.notice.entity.Notice;
 import com.example.jpablog.notice.entity.NoticeLike;
@@ -20,6 +21,7 @@ import com.example.jpablog.user.exception.MemberNotFoundException;
 import com.example.jpablog.user.exception.PasswordNotMatchException;
 import com.example.jpablog.user.model.*;
 import com.example.jpablog.user.repository.MemberRepository;
+import com.example.jpablog.user.service.MemberService;
 import com.example.jpablog.user.service.PointService;
 import com.example.jpablog.util.JWTUtils;
 import com.example.jpablog.util.PasswordUtils;
@@ -49,6 +51,7 @@ public class ApiMemberController {
     private final NoticeLikeRepository noticeLikeRepository;
     private final BoardService boardService;
     private final PointService pointService;
+    private final MemberService memberService;
 
 
 //    @PostMapping("/api/user")
@@ -230,7 +233,7 @@ public class ApiMemberController {
 
         Member member = Member.builder()
                 .email(memberInput.getEmail())
-                .userName(memberInput.getUsername())
+                .userName(memberInput.getUserName())
                 .phone(memberInput.getPhone())
                 .password(encryptPassword)
                 .regDate(LocalDateTime.now())
@@ -473,6 +476,36 @@ public class ApiMemberController {
         }
 
         ServiceResult result = pointService.addPoint(email, memberPointInput);
+        return ResponseResult.result(result);
+    }
+
+    /**
+     * 95. 회원가입시 가입된 회원에게 가입메일을 전송하는 API를 작성해 보세요.
+     */
+    @PostMapping("/api/public/user")
+    public ResponseEntity<?> add(@RequestBody MemberInput memberInput){
+
+        ServiceResult result = memberService.add(memberInput);
+
+        return ResponseResult.result(result);
+    }
+
+    /**
+     * 96. 비밀번호 초기화를 위해서 이메일로 인증코드를 전송하는 API를 작성해 보세요.
+     */
+    @PostMapping("/api/public/user/password/reset")
+    public ResponseEntity<?> resetPassword(@RequestBody @Valid MemberPasswordResetInput memberPasswordResetInput, Errors errors){
+
+        if(errors.hasErrors()){
+            return ResponseResult.fail("입력 값이 정확하지 않습니다.", ResponseError.of(errors.getAllErrors()));
+        }
+        ServiceResult result = null;
+
+        try {
+            result = memberService.resetPassword(memberPasswordResetInput);
+        } catch (BizException e){
+            return ResponseResult.fail(e.getMessage());
+        }
         return ResponseResult.result(result);
 
     }
