@@ -3,7 +3,10 @@ package com.example.jpablog.board.service;
 import com.example.jpablog.board.entity.*;
 import com.example.jpablog.board.model.*;
 import com.example.jpablog.board.repository.*;
+import com.example.jpablog.common.MailComponent;
 import com.example.jpablog.common.exception.BizException;
+import com.example.jpablog.mail.entity.MailTemplate;
+import com.example.jpablog.mail.repository.MailTemplateRepository;
 import com.example.jpablog.user.entity.Member;
 import com.example.jpablog.user.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +30,8 @@ public class BoardServiceImpl implements BoardService {
     private final BoardScrapRepository boardScrapRepository;
     private final BoardBookmarkRepository boardBookmarkRepository;
     private final BoardCommentRepository boardCommentRepository;
+    private final MailTemplateRepository mailTemplateRepository;
+    private final MailComponent mailComponent;
     @Override
     public ServiceResult addBoard(BoardTypeInput boardTypeInput) {
 
@@ -447,6 +452,22 @@ public class BoardServiceImpl implements BoardService {
                 .regDate(LocalDateTime.now())
                 .build();
         boardRepository.save(board);
+
+        //메일전송로직
+
+        Optional<MailTemplate> optionalMailTemplate = mailTemplateRepository.findByTemplateId("BOARD_ADD");
+        optionalMailTemplate.ifPresent((e) ->{
+
+            String fromEmail = e.getSendEmail();
+            String fromUserName = e.getSendUserName();
+            String title = e.getTitle().replaceAll("\\{USER_NAME\\}", member.getUserName());
+            String contents = e.getContents().replaceAll("\\{BOARD_TITLE\\}", board.getTitle())
+                    .replaceAll("\\{BOARD_CONTENTS\\}", board.getContents());
+
+            mailComponent.send(fromEmail, fromUserName, member.getEmail(), member.getUserName(), title, contents);
+
+        });
+
         return ServiceResult.success();
 
     }
