@@ -74,7 +74,7 @@ create table BOARD_TYPE
 create table BOARD
 (
     ID            BIGINT auto_increment primary key,
-    CONTENTS      VARCHAR(255),
+    CONTENTS      CLOB,
     REG_DATE      TIMESTAMP,
     TITLE         VARCHAR(255),
     BOARD_TYPE_ID BIGINT,
@@ -83,6 +83,8 @@ create table BOARD
 
     START_DATE  DATE,
     END_DATE    DATE,
+
+    REPLY_CONTENTS      CLOB,
 
     constraint FK_BOARD_BOARD_TYPE_ID foreign key (BOARD_TYPE_ID) references BOARD_TYPE (ID),
     constraint FK_BOARD_MEMBER_ID foreign key (MEMBER_ID) references MEMBER (ID)
