@@ -471,4 +471,34 @@ public class BoardServiceImpl implements BoardService {
         return ServiceResult.success();
 
     }
+
+    @Override
+    public ServiceResult replyBoard(Long id, BoardReplyInput boardReplyInput) {
+
+        Optional<Board> optionalBoard = boardRepository.findById(id);
+        if (!optionalBoard.isPresent()){
+            return ServiceResult.fail("게시글이 존재하지 않습니다.");
+        }
+        Board board = optionalBoard.get();
+
+        board.setReplyContents(boardReplyInput.getReplyContents());
+        boardRepository.save(board);
+
+        //메일전송
+        Optional<MailTemplate> optionalMailTemplate = mailTemplateRepository.findByTemplateId("BOARD_REPLY");
+        optionalMailTemplate.ifPresent((e) -> {
+            String fromEmail = e.getSendEmail();
+            String fromUserName = e.getSendUserName();
+            String title = e.getTitle().replaceAll("\\{USER_NAME\\}", board.getMember().getUserName());
+            String contents = e.getContents().replaceAll("\\{BOARD_TITLE\\}", board.getTitle())
+                    .replaceAll("\\{BOARD_CONTENTS\\}", board.getContents())
+                    .replaceAll("\\{BOARD_REPLY_CONTENTS\\}", board.getReplyContents());
+
+            mailComponent.send(fromEmail, fromUserName
+                    , board.getMember().getEmail(), board.getMember().getUserName(), title, contents);
+
+        });
+        return ServiceResult.success();
+
+    }
 }
