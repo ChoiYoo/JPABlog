@@ -32,4 +32,15 @@ public class ApiAdminBoardController {
         List<BoardBadReport> list = boardService.badReportList();
         return ResponseResult.success(list);
     }
+
+    /**
+     98. 문의 게시판이 글에 답변을 달았을때 메일로 답변 정보를 전송하는 API를 작성해 보세요.
+     */
+    @PostMapping("/api/admin/board/{id}/reply")
+    public ResponseEntity<?> reply(@PathVariable Long id, @RequestBody BoardReplyInput boardReplyInput) {
+
+        ServiceResult result = boardService.replyBoard(id, boardReplyInput);
+        return ResponseResult.result(result);
+
+    }
 }

@@ -267,6 +267,7 @@ public class ApiBoardController {
      * 93. 인터셉터을 활용하여 JWT 인증이 필요한 API에 대해서(글쓰기) 토큰 유효성을 검증하는 API를 작성해 보세요.
      * - 게시글쓰기 기능구현(/api/board)- 글쓰기 API호출시 토큰 유효성 검사
      */
+    /*
     @PostMapping("/api/board")
     public ResponseEntity<?> add(@RequestHeader("JWT-TOKEN") String token
             , @RequestBody BoardInput boardInput){
@@ -275,6 +276,19 @@ public class ApiBoardController {
         ServiceResult result = boardService.add(email, boardInput);
 
         return ResponseResult.result(result);
+    }
 
+     */
+
+    /**
+     97. 게시판에 글을 작성했을때 사용자에게 작성된 글의 정보를 메일로 전송하는 API를 작성해 보세요.
+     */
+    @PostMapping("/api/board")
+    public ResponseEntity<?> add(@RequestHeader("F-TOKEN") String token, @RequestBody BoardInput boardInput) {
+
+        String email = JWTUtils.getIssuer(token);
+
+        ServiceResult result = boardService.add(email, boardInput);
+        return ResponseResult.result(result);
     }
 }
