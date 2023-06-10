@@ -219,4 +219,22 @@ public class MemberServiceImpl implements MemberService{
 
         return ServiceResult.success();
     }
+
+    @Override
+    public void sendServiceNotice() {
+
+        Optional<MailTemplate> optionalMailTemplate = mailTemplateRepository.findByTemplateId("USER_SERVICE_NOTICE");
+        optionalMailTemplate.ifPresent(e -> {
+
+            String fromEmail = e.getSendEmail();
+            String fromUserName = e.getSendUserName();
+            String contents = e.getContents();
+
+            memberRepository.findAll().stream().forEach(m -> {
+                String title = e.getTitle().replaceAll("\\{MEMBER_NAME\\}", m.getUserName());
+                mailComponent.send(fromEmail, fromUserName
+                        , m.getEmail(), m.getUserName(), title, contents);
+            });
+        });
+    }
 }

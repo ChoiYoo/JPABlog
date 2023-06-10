@@ -45,19 +45,19 @@ VALUES
 
 INSERT INTO MAIL_TEMPLATE(ID, TEMPLATE_ID, TITLE, CONTENTS, SEND_EMAIL, SEND_USER_NAME, REG_DATE)
 VALUES (1, 'USER_RESET_PASSWORD'
-       , '{USER_NAME}님의 비밀번호 초기화 요청입니다.'
-       , '<div><p>{USER_NAME}님 안녕하세요.</p><p>아래 링크를 클릭하여, 비밀번호를 초기화해 주세요.</p><p><a href="{SERVER_URL}/reset?key={RESET_PASSWORD_KEY}">초기화</a></p></div>'
+       , '{MEMBER_NAME}님의 비밀번호 초기화 요청입니다.'
+       , '<div><p>{MEMBER_NAME}님 안녕하세요.</p><p>아래 링크를 클릭하여, 비밀번호를 초기화해 주세요.</p><p><a href="{SERVER_URL}/reset?key={RESET_PASSWORD_KEY}">초기화</a></p></div>'
        , '', '관리자', '2021-02-01 01:12:37.000000')
      , (2, 'BOARD_ADD'
-       , '{USER_NAME}님이 글을 게시하였습니다.'
+       , '{MEMBER_NAME}님이 글을 게시하였습니다.'
        , '<div><p>제목: {BOARD_TITLE}</p><p>내용</p><div>{BOARD_CONTENTS}</div></div>'
        , '', '관리자', '2021-02-01 01:12:37.000000')
      , (3, 'BOARD_REPLY'
-       , '{USER_NAME}님이 글에 답변을 하였습니다.'
+       , '{MEMBER_NAME}님이 글에 답변을 하였습니다.'
        , '<div><p>제목: {BOARD_TITLE}</p><p>내용</p><div>{BOARD_CONTENTS}</div><p>답변</p><div>{BOARD_REPLY_CONTENTS}</div></div>'
        , '', '관리자', '2021-02-01 01:12:37.000000')
      , (4, 'USER_SERVICE_NOTICE'
-       , '{USER_NAME}님 안녕하세요.'
+       , '{MEMBER_NAME}님 안녕하세요.'
        , '<div><p>개인정보 이용내역 안내</p><p>서비스를 잘 이용하고 계십니다.</p></div>'
        , '', '관리자', '2021-02-01 01:12:37.000000')
 ;
