@@ -12,4 +12,7 @@ import java.util.List;
 public interface LogsService {
 
     void add(String text);
+
+    void deleteLog();
+
 }
