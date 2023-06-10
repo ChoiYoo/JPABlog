@@ -33,4 +33,9 @@ public class LogsServiceImpl implements LogsService{
                 .build());
 
     }
+
+    @Override
+    public void deleteLog() {
+        logsRepository.deleteAll();
+    }
 }
